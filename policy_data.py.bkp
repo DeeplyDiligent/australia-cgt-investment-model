@@ -1,0 +1,274 @@
+POLICY_UPDATES = [
+    {
+        "topic": "Core rule still unchanged for individuals",
+        "status": "Current law",
+        "effective": "2024-25 and 2025-26",
+        "summary": (
+            "For ordinary individual investors, capital gains on shares and investment property are still taxed "
+            "at your marginal tax rate, with the usual CGT discount framework still in place for eligible "
+            "long-held assets. There has not been a broad change that suddenly makes shares or direct property "
+            "materially advantaged over the other purely on mainstream CGT settings."
+        ),
+        "impact": (
+            "Your property-vs-shares decision is still driven mainly by leverage, yield, growth, fees, "
+            "liquidity, and risk tolerance rather than a fresh across-the-board CGT rewrite."
+        ),
+        "source_label": "ATO Guide to capital gains tax 2025",
+        "source_url": "https://www.ato.gov.au/law/view/document?docid=SAV/GCGT/00004&PiT=20240701000001",
+    },
+    {
+        "topic": "Foreign resident CGT withholding increased",
+        "status": "Current law",
+        "effective": "1 January 2025",
+        "summary": (
+            "The foreign resident capital gains withholding rate increased to 15% and the old property-value "
+            "threshold was removed. Australian resident sellers now need a clearance certificate to avoid an amount "
+            "being withheld on sale."
+        ),
+        "impact": (
+            "Mostly relevant if you sell Australian real property and need settlement administration done correctly. "
+            "It does not change your ultimate CGT liability if you are an Australian resident, but it changes cashflow "
+            "and paperwork at sale."
+        ),
+        "source_label": "ATO What's new for individuals",
+        "source_url": "https://www.ato.gov.au/individuals-and-families/your-tax-return/before-you-prepare-your-tax-return/what-s-new-for-individuals",
+    },
+    {
+        "topic": "Build-to-rent tax incentives expanded",
+        "status": "Current law",
+        "effective": "From 2025, with 2026 rule updates",
+        "summary": (
+            "Eligible build-to-rent developments can access a 4% capital works deduction and a 15% concessional "
+            "withholding rate on eligible managed investment trust fund payments attributable to rental income and "
+            "capital gains from the development."
+        ),
+        "impact": (
+            "This is more relevant to institutional or trust-based residential exposure than to a typical direct "
+            "mum-and-dad investment property purchase, but it can influence housing supply, competition for renters, "
+            "and the relative attractiveness of some new precincts."
+        ),
+        "source_label": "ATO Build to rent development tax incentives",
+        "source_url": "https://www.ato.gov.au/businesses-and-organisations/assets-and-property/build-to-rent-development-tax-incentives",
+    },
+    {
+        "topic": "Negative gearing still exists",
+        "status": "Current law",
+        "effective": "Current",
+        "summary": (
+            "Negative gearing has not been abolished. The ATO still states that where deductible rental expenses "
+            "exceed rental income, you can generally claim the loss against rental and other income, subject to the "
+            "usual rules."
+        ),
+        "impact": (
+            "That means low-yield property is still partly cushioned by current tax law. In this app, the removal of "
+            "negative gearing is treated as a scenario stress test, not current law."
+        ),
+        "source_label": "ATO How to claim rental expenses",
+        "source_url": "https://www.ato.gov.au/individuals-and-families/investments-and-assets/property-and-land/residential-rental-properties/rental-expenses/how-to-claim-rental-expenses",
+    },
+    {
+        "topic": "Division 296 super changes",
+        "status": "Current law",
+        "effective": "1 July 2026",
+        "summary": (
+            "Better Targeted Super Concessions is now law. From 1 July 2026, balances above the large super balance "
+            "threshold face an extra 15% tax on the proportion of earnings over that threshold, with an additional "
+            "10% for balances above the very large threshold."
+        ),
+        "impact": (
+            "This is not a general direct-property-or-shares CGT rewrite outside super, but it matters if you plan to "
+            "accumulate large assets inside super over time."
+        ),
+        "source_label": "ATO Better Targeted Super Concessions is now law",
+        "source_url": "https://www.ato.gov.au/tax-and-super-professionals/for-superannuation-professionals/super-funds-newsroom/better-targeted-super-concessions-is-now-law",
+    },
+    {
+        "topic": "Foreign resident CGT regime broadening",
+        "status": "Draft / proposed",
+        "effective": "Draft released April 2026",
+        "summary": (
+            "Treasury released draft legislation to strengthen the foreign resident CGT regime, broadening the assets "
+            "captured where foreign residents dispose of assets with a close economic connection to Australian land and "
+            "natural resources."
+        ),
+        "impact": (
+            "This matters mainly for foreign investors and deal structures, but it is one of the bigger recent CGT "
+            "reform items in Australia. It is not the same thing as a broad domestic investor CGT increase."
+        ),
+        "source_label": "Treasury consultation: strengthening foreign resident CGT regime",
+        "source_url": "https://consult.treasury.gov.au/c2026-755475",
+    },
+]
+
+SCENARIO_NOTES = {
+    "Current law": (
+        "Negative gearing remains available, and mainstream individual CGT settings remain broadly similar for direct "
+        "property and shares."
+    ),
+    "No negative gearing": (
+        "Stress test only. Rental losses are assumed not to offset salary or wages. This usually makes low-yield "
+        "property materially less attractive unless rent growth or capital growth is strong."
+    ),
+    "Reduced CGT discount": (
+        "Stress test only. The model reduces the CGT discount used on sale. This hurts long-duration, low-yield, "
+        "high-growth strategies more than high-cashflow strategies."
+    ),
+}
+
+AREA_DIMENSIONS = {
+    "scarcity": "Land scarcity and replacement difficulty",
+    "owner_occupier": "Owner-occupier demand depth",
+    "yield": "Rental resilience and cash yield support",
+    "supply": "Protection from future oversupply",
+    "access": "Access to jobs, transport, schools and services",
+    "climate": "Climate, insurance and physical resilience",
+    "asset_quality": "Dwelling quality and low ongoing drag",
+    "policy": "Resilience if tax settings become less investor-friendly",
+}
+
+AREA_PROFILES = [
+    {
+        "profile": "Established inner/middle-ring detached houses",
+        "type": "Established property / big houses / land-rich",
+        "scores": {
+            "scarcity": 9,
+            "owner_occupier": 9,
+            "yield": 5,
+            "supply": 9,
+            "access": 8,
+            "climate": 6,
+            "asset_quality": 7,
+            "policy": 7,
+        },
+        "notes": "Usually strongest when the block has genuine land scarcity, planning friction, family appeal and renovation upside.",
+    },
+    {
+        "profile": "Established family suburbs with school and rail access",
+        "type": "Established property / family suburbs",
+        "scores": {
+            "scarcity": 8,
+            "owner_occupier": 9,
+            "yield": 6,
+            "supply": 8,
+            "access": 8,
+            "climate": 6,
+            "asset_quality": 7,
+            "policy": 8,
+        },
+        "notes": "Deep owner-occupier demand usually makes these areas less dependent on tax-driven investor demand.",
+    },
+    {
+        "profile": "Transit-oriented townhouses and boutique infill",
+        "type": "Townhouses / low-rise infill",
+        "scores": {
+            "scarcity": 7,
+            "owner_occupier": 8,
+            "yield": 6,
+            "supply": 7,
+            "access": 9,
+            "climate": 6,
+            "asset_quality": 7,
+            "policy": 8,
+        },
+        "notes": "Often a strong middle ground if detached housing becomes unaffordable but buyers still want amenity and low strata drag.",
+    },
+    {
+        "profile": "Older boutique apartments in scarce suburbs",
+        "type": "Apartments / established units",
+        "scores": {
+            "scarcity": 6,
+            "owner_occupier": 7,
+            "yield": 7,
+            "supply": 7,
+            "access": 9,
+            "climate": 6,
+            "asset_quality": 6,
+            "policy": 8,
+        },
+        "notes": "Can outperform generic unit stock when the building is small, well-located, land-rich for its unit count and not dominated by investors.",
+    },
+    {
+        "profile": "Regional service hubs near hospitals/universities",
+        "type": "Regional / mixed dwelling stock",
+        "scores": {
+            "scarcity": 5,
+            "owner_occupier": 6,
+            "yield": 8,
+            "supply": 5,
+            "access": 5,
+            "climate": 5,
+            "asset_quality": 6,
+            "policy": 8,
+        },
+        "notes": "Can work well where cash yield is strong and demand is anchored by employment nodes rather than pure lifestyle speculation.",
+    },
+    {
+        "profile": "Outer greenfield new house-and-land estates",
+        "type": "New properties / detached houses",
+        "scores": {
+            "scarcity": 3,
+            "owner_occupier": 6,
+            "yield": 6,
+            "supply": 3,
+            "access": 4,
+            "climate": 5,
+            "asset_quality": 7,
+            "policy": 5,
+        },
+        "notes": "Usually supported by depreciation and headline affordability, but long-run performance can be held back by elastic land supply and weak scarcity.",
+    },
+    {
+        "profile": "New high-rise apartments in investor precincts",
+        "type": "New properties / apartments and units",
+        "scores": {
+            "scarcity": 2,
+            "owner_occupier": 4,
+            "yield": 5,
+            "supply": 2,
+            "access": 8,
+            "climate": 5,
+            "asset_quality": 4,
+            "policy": 3,
+        },
+        "notes": "Most vulnerable if tax benefits matter less, because oversupply, strata costs and low land content can dominate the thesis.",
+    },
+    {
+        "profile": "Climate-exposed coastal lifestyle markets",
+        "type": "Lifestyle / houses and units",
+        "scores": {
+            "scarcity": 6,
+            "owner_occupier": 7,
+            "yield": 4,
+            "supply": 5,
+            "access": 4,
+            "climate": 2,
+            "asset_quality": 5,
+            "policy": 6,
+        },
+        "notes": "Demand can stay strong, but insurance, resilience spending and extreme weather can increasingly separate winners from losers.",
+    },
+]
+
+SCENARIO_ADJUSTMENTS = {
+    "Current law": {},
+    "No negative gearing": {
+        "Established inner/middle-ring detached houses": {"yield": -1, "policy": -1},
+        "Established family suburbs with school and rail access": {"yield": -1},
+        "Transit-oriented townhouses and boutique infill": {"yield": 0, "policy": 1},
+        "Older boutique apartments in scarce suburbs": {"yield": 1, "policy": 1},
+        "Regional service hubs near hospitals/universities": {"yield": 1, "policy": 1},
+        "Outer greenfield new house-and-land estates": {"policy": -1, "supply": -1},
+        "New high-rise apartments in investor precincts": {"yield": -1, "policy": -2, "supply": -1},
+        "Climate-exposed coastal lifestyle markets": {"yield": -1},
+    },
+    "Reduced CGT discount": {
+        "Established inner/middle-ring detached houses": {"policy": -1},
+        "Established family suburbs with school and rail access": {"policy": -1},
+        "Transit-oriented townhouses and boutique infill": {"policy": 0},
+        "Older boutique apartments in scarce suburbs": {"policy": 1},
+        "Regional service hubs near hospitals/universities": {"policy": 1},
+        "Outer greenfield new house-and-land estates": {"policy": -1},
+        "New high-rise apartments in investor precincts": {"policy": -1},
+        "Climate-exposed coastal lifestyle markets": {"policy": -1},
+    },
+}

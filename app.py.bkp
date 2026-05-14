@@ -1,0 +1,439 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
+from typing import Dict, List
+
+import altair as alt
+import pandas as pd
+import streamlit as st
+
+from policy_data import (
+    AREA_DIMENSIONS,
+    AREA_PROFILES,
+    POLICY_UPDATES,
+    SCENARIO_ADJUSTMENTS,
+    SCENARIO_NOTES,
+)
+
+
+@dataclass
+class PropertyResult:
+    ending_wealth: float
+    total_after_tax_cashflow: float
+    sale_proceeds_after_tax: float
+    cgt_tax: float
+    average_annual_cashflow: float
+    first_year_after_tax_cashflow: float
+    initial_cash_outlay: float
+
+
+@dataclass
+class SharesResult:
+    ending_wealth: float
+    ending_portfolio_value: float
+    cgt_tax: float
+    average_annual_distribution: float
+    first_year_distribution: float
+    initial_cash_outlay: float
+
+
+def money(value: float) -> str:
+    return f"${value:,.0f}"
+
+
+def pct(value: float) -> str:
+    return f"{value:.1f}%"
+
+
+def compound_cashflows(cashflows: List[float], reinvest_rate: float) -> float:
+    total = 0.0
+    years = len(cashflows)
+    for index, cashflow in enumerate(cashflows):
+        remaining_years = years - index - 1
+        total += cashflow * ((1 + reinvest_rate) ** remaining_years)
+    return total
+
+
+def model_property(
+    property_price: float,
+    deposit_pct: float,
+    purchase_cost_pct: float,
+    selling_cost_pct: float,
+    interest_rate: float,
+    gross_yield_pct: float,
+    rental_growth_pct: float,
+    capital_growth_pct: float,
+    non_interest_cost_pct: float,
+    marginal_tax_rate: float,
+    holding_years: int,
+    reinvest_rate: float,
+    negative_gearing_enabled: bool,
+    cgt_discount_pct: float,
+) -> PropertyResult:
+    deposit = property_price * deposit_pct
+    purchase_costs = property_price * purchase_cost_pct
+    loan_balance = property_price - deposit
+    initial_cash_outlay = deposit + purchase_costs
+
+    property_value = property_price
+    annual_rent = property_price * gross_yield_pct
+    carried_forward_loss = 0.0
+    cashflows: List[float] = []
+
+    for _ in range(holding_years):
+        interest_cost = loan_balance * interest_rate
+        non_interest_costs = property_value * non_interest_cost_pct
+        taxable_income = annual_rent - interest_cost - non_interest_costs
+
+        if negative_gearing_enabled:
+            tax_effect = -taxable_income * marginal_tax_rate
+        else:
+            if taxable_income > 0:
+                taxable_after_losses = max(taxable_income - carried_forward_loss, 0.0)
+                carried_forward_loss = max(carried_forward_loss - taxable_income, 0.0)
+                tax_effect = -taxable_after_losses * marginal_tax_rate
+            else:
+                carried_forward_loss += abs(taxable_income)
+                tax_effect = 0.0
+
+        after_tax_cashflow = annual_rent - interest_cost - non_interest_costs + tax_effect
+        cashflows.append(after_tax_cashflow)
+
+        annual_rent *= 1 + rental_growth_pct
+        property_value *= 1 + capital_growth_pct
+
+    sale_price = property_value
+    selling_costs = sale_price * selling_cost_pct
+    capital_gain = max(sale_price - selling_costs - property_price - purchase_costs, 0.0)
+    taxable_gain = capital_gain * (1 - cgt_discount_pct)
+    cgt_tax = taxable_gain * marginal_tax_rate
+    sale_proceeds_after_tax = sale_price - selling_costs - loan_balance - cgt_tax
+    reinvested_cashflows = compound_cashflows(cashflows, reinvest_rate)
+    ending_wealth = sale_proceeds_after_tax + reinvested_cashflows
+
+    return PropertyResult(
+        ending_wealth=ending_wealth,
+        total_after_tax_cashflow=sum(cashflows),
+        sale_proceeds_after_tax=sale_proceeds_after_tax,
+        cgt_tax=cgt_tax,
+        average_annual_cashflow=sum(cashflows) / holding_years,
+        first_year_after_tax_cashflow=cashflows[0],
+        initial_cash_outlay=initial_cash_outlay,
+    )
+
+
+def model_shares(
+    initial_investment: float,
+    brokerage_pct: float,
+    dividend_yield_pct: float,
+    franked_fraction: float,
+    company_tax_rate: float,
+    capital_growth_pct: float,
+    management_fee_pct: float,
+    marginal_tax_rate: float,
+    holding_years: int,
+    cgt_discount_pct: float,
+) -> SharesResult:
+    buy_cost = initial_investment * brokerage_pct
+    portfolio_value = initial_investment - buy_cost
+    cost_base = initial_investment
+    distributions: List[float] = []
+
+    for _ in range(holding_years):
+        gross_cash_dividend = portfolio_value * dividend_yield_pct
+        franked_dividend = gross_cash_dividend * franked_fraction
+        franking_credit = franked_dividend * (company_tax_rate / (1 - company_tax_rate))
+        tax_on_dividends = (gross_cash_dividend + franking_credit) * marginal_tax_rate
+        net_tax = tax_on_dividends - franking_credit
+        after_tax_dividend = gross_cash_dividend - net_tax
+        management_fee = portfolio_value * management_fee_pct
+
+        portfolio_value = portfolio_value * (1 + capital_growth_pct) - management_fee + after_tax_dividend
+        cost_base += after_tax_dividend
+        distributions.append(after_tax_dividend)
+
+    sell_cost = portfolio_value * brokerage_pct
+    sale_proceeds = portfolio_value - sell_cost
+    capital_gain = max(sale_proceeds - cost_base, 0.0)
+    taxable_gain = capital_gain * (1 - cgt_discount_pct)
+    cgt_tax = taxable_gain * marginal_tax_rate
+    ending_wealth = sale_proceeds - cgt_tax
+
+    return SharesResult(
+        ending_wealth=ending_wealth,
+        ending_portfolio_value=sale_proceeds,
+        cgt_tax=cgt_tax,
+        average_annual_distribution=sum(distributions) / holding_years,
+        first_year_distribution=distributions[0],
+        initial_cash_outlay=initial_investment,
+    )
+
+
+def build_area_frame(selected_scenario: str, weights: Dict[str, float]) -> pd.DataFrame:
+    rows = []
+    adjustments = SCENARIO_ADJUSTMENTS[selected_scenario]
+
+    for profile in AREA_PROFILES:
+        adjusted_scores = profile["scores"].copy()
+        for dimension, delta in adjustments.get(profile["profile"], {}).items():
+            adjusted_scores[dimension] = max(1, min(10, adjusted_scores[dimension] + delta))
+
+        weighted_score = sum(adjusted_scores[key] * weights[key] for key in weights)
+        rows.append(
+            {
+                "Profile": profile["profile"],
+                "Type": profile["type"],
+                "Score": round(weighted_score, 2),
+                "Why it tends to win or lose": profile["notes"],
+                **{AREA_DIMENSIONS[key]: adjusted_scores[key] for key in weights},
+            }
+        )
+
+    return pd.DataFrame(rows).sort_values("Score", ascending=False).reset_index(drop=True)
+
+
+def cgt_discount_for_scenario(selected_scenario: str) -> float:
+    if selected_scenario == "Reduced CGT discount":
+        return 0.25
+    return 0.50
+
+
+def negative_gearing_for_scenario(selected_scenario: str) -> bool:
+    return selected_scenario != "No negative gearing"
+
+
+def make_summary(property_result: PropertyResult, shares_result: SharesResult, selected_scenario: str) -> str:
+    advantage = property_result.ending_wealth - shares_result.ending_wealth
+    if advantage > 0:
+        lead = "Property wins on these assumptions."
+    elif advantage < 0:
+        lead = "Shares win on these assumptions."
+    else:
+        lead = "The model is roughly neutral on these assumptions."
+
+    if selected_scenario == "No negative gearing":
+        tax_read = "Without negative gearing, negative cashflow property becomes much harder to justify unless growth is exceptional."
+    elif selected_scenario == "Reduced CGT discount":
+        tax_read = "With a lower CGT discount, long-duration growth assets lose some after-tax edge and cash yield matters more."
+    else:
+        tax_read = "Under current law, tax settings alone usually do not decide property versus shares for a domestic investor."
+
+    return f"{lead} After-tax ending wealth differs by {money(abs(advantage))}. {tax_read}"
+
+
+st.set_page_config(page_title="Australia CGT Investment Model", layout="wide")
+
+st.title("Australia CGT Investment Model")
+st.caption(
+    "A research-backed Streamlit model for comparing Australian property and shares under current law and policy stress tests. "
+    "Informational only, not personal financial or tax advice."
+)
+
+tab_research, tab_model, tab_areas = st.tabs(
+    ["Research summary", "Property vs shares model", "Suburb and area framework"]
+)
+
+with tab_research:
+    st.subheader("Recent Australia tax changes that matter here")
+    st.info(
+        "Important correction: negative gearing is still current law. The app therefore separates current law from hypothetical stress tests."
+    )
+
+    policy_df = pd.DataFrame(POLICY_UPDATES)[["topic", "status", "effective", "impact"]]
+    policy_df.columns = ["Topic", "Status", "Effective", "Why it matters for investing"]
+    st.dataframe(policy_df, use_container_width=True, hide_index=True)
+
+    for item in POLICY_UPDATES:
+        with st.expander(f"{item['topic']} — {item['status']}"):
+            st.write(item["summary"])
+            st.write(f"**Why it matters:** {item['impact']}")
+            st.markdown(f"[{item['source_label']}]({item['source_url']})")
+
+with tab_model:
+    st.subheader("After-tax property vs shares comparison")
+
+    scenario = st.selectbox(
+        "Policy scenario",
+        options=["Current law", "No negative gearing", "Reduced CGT discount"],
+        help="Current law uses today's broad domestic settings. The others are stress-test scenarios.",
+    )
+    st.caption(SCENARIO_NOTES[scenario])
+
+    left, right = st.columns(2)
+
+    with left:
+        st.markdown("**Shared assumptions**")
+        holding_years = st.slider("Holding period (years)", 5, 30, 15)
+        marginal_tax_rate = st.slider("Combined marginal tax rate", 0.00, 0.50, 0.39, 0.005)
+        reinvest_rate = st.slider("Rate earned on spare property cashflows", 0.00, 0.08, 0.04, 0.005)
+
+        st.markdown("**Property assumptions**")
+        property_price = st.number_input("Property price", min_value=200_000, value=900_000, step=25_000)
+        deposit_pct = st.slider("Deposit", 0.10, 0.60, 0.25, 0.01)
+        gross_yield_pct = st.slider("Gross rental yield", 0.02, 0.08, 0.04, 0.0025)
+        rental_growth_pct = st.slider("Annual rent growth", 0.00, 0.07, 0.03, 0.0025)
+        capital_growth_pct_property = st.slider("Annual capital growth (property)", 0.00, 0.10, 0.05, 0.0025)
+        interest_rate = st.slider("Interest rate", 0.03, 0.10, 0.062, 0.001)
+        non_interest_cost_pct = st.slider("Annual non-interest cost load", 0.003, 0.03, 0.012, 0.001)
+        purchase_cost_pct = st.slider("Purchase cost load", 0.01, 0.08, 0.055, 0.001)
+        selling_cost_pct = st.slider("Selling cost load", 0.005, 0.05, 0.025, 0.001)
+
+    with right:
+        st.markdown("**Shares assumptions**")
+        dividend_yield_pct = st.slider("Dividend yield", 0.01, 0.07, 0.035, 0.0025)
+        franked_fraction = st.slider("Franked share of dividends", 0.00, 1.00, 0.75, 0.05)
+        company_tax_rate = st.slider("Franking rate", 0.25, 0.30, 0.30, 0.01)
+        capital_growth_pct_shares = st.slider("Annual capital growth (shares)", 0.00, 0.10, 0.055, 0.0025)
+        management_fee_pct = st.slider("ETF / fund fee load", 0.000, 0.020, 0.002, 0.0005)
+        brokerage_pct = st.slider("Brokerage / execution cost", 0.000, 0.010, 0.001, 0.0005)
+
+        st.markdown("**Personal context placeholders**")
+        st.write(
+            "If you later want tighter outputs for your situation, the biggest missing inputs are your income tax bracket, "
+            "borrowing capacity, serviceability comfort, state stamp duty, and whether future investing would happen inside or outside super."
+        )
+
+    scenario_cgt_discount = cgt_discount_for_scenario(scenario)
+    scenario_negative_gearing = negative_gearing_for_scenario(scenario)
+
+    property_result = model_property(
+        property_price=property_price,
+        deposit_pct=deposit_pct,
+        purchase_cost_pct=purchase_cost_pct,
+        selling_cost_pct=selling_cost_pct,
+        interest_rate=interest_rate,
+        gross_yield_pct=gross_yield_pct,
+        rental_growth_pct=rental_growth_pct,
+        capital_growth_pct=capital_growth_pct_property,
+        non_interest_cost_pct=non_interest_cost_pct,
+        marginal_tax_rate=marginal_tax_rate,
+        holding_years=holding_years,
+        reinvest_rate=reinvest_rate,
+        negative_gearing_enabled=scenario_negative_gearing,
+        cgt_discount_pct=scenario_cgt_discount,
+    )
+
+    shares_result = model_shares(
+        initial_investment=property_result.initial_cash_outlay,
+        brokerage_pct=brokerage_pct,
+        dividend_yield_pct=dividend_yield_pct,
+        franked_fraction=franked_fraction,
+        company_tax_rate=company_tax_rate,
+        capital_growth_pct=capital_growth_pct_shares,
+        management_fee_pct=management_fee_pct,
+        marginal_tax_rate=marginal_tax_rate,
+        holding_years=holding_years,
+        cgt_discount_pct=scenario_cgt_discount,
+    )
+
+    st.success(make_summary(property_result, shares_result, scenario))
+
+    results_df = pd.DataFrame(
+        [
+            {
+                "Strategy": "Property",
+                "Initial cash outlay": money(property_result.initial_cash_outlay),
+                "Year 1 after-tax cashflow": money(property_result.first_year_after_tax_cashflow),
+                "Average annual after-tax cashflow": money(property_result.average_annual_cashflow),
+                "After-tax sale / terminal value": money(property_result.sale_proceeds_after_tax),
+                "CGT paid at exit": money(property_result.cgt_tax),
+                "After-tax ending wealth": money(property_result.ending_wealth),
+            },
+            {
+                "Strategy": "Shares",
+                "Initial cash outlay": money(shares_result.initial_cash_outlay),
+                "Year 1 after-tax cashflow": money(shares_result.first_year_distribution),
+                "Average annual after-tax cashflow": money(shares_result.average_annual_distribution),
+                "After-tax sale / terminal value": money(shares_result.ending_portfolio_value - shares_result.cgt_tax),
+                "CGT paid at exit": money(shares_result.cgt_tax),
+                "After-tax ending wealth": money(shares_result.ending_wealth),
+            },
+        ]
+    )
+    st.dataframe(results_df, use_container_width=True, hide_index=True)
+
+    st.markdown("**Yield versus growth stress grid for property**")
+    yield_points = [0.035, 0.045, 0.055, 0.065]
+    growth_points = [0.02, 0.04, 0.06, 0.08]
+    grid_rows = []
+    for yld in yield_points:
+        row = {"Gross yield \\ Growth": pct(yld * 100)}
+        for growth in growth_points:
+            stress_result = model_property(
+                property_price=property_price,
+                deposit_pct=deposit_pct,
+                purchase_cost_pct=purchase_cost_pct,
+                selling_cost_pct=selling_cost_pct,
+                interest_rate=interest_rate,
+                gross_yield_pct=yld,
+                rental_growth_pct=rental_growth_pct,
+                capital_growth_pct=growth,
+                non_interest_cost_pct=non_interest_cost_pct,
+                marginal_tax_rate=marginal_tax_rate,
+                holding_years=holding_years,
+                reinvest_rate=reinvest_rate,
+                negative_gearing_enabled=scenario_negative_gearing,
+                cgt_discount_pct=scenario_cgt_discount,
+            )
+            row[pct(growth * 100)] = money(stress_result.ending_wealth - shares_result.ending_wealth)
+        grid_rows.append(row)
+    st.dataframe(pd.DataFrame(grid_rows), use_container_width=True, hide_index=True)
+
+    chart_df = pd.DataFrame(
+        [
+            {"Strategy": "Property", "After-tax ending wealth": property_result.ending_wealth},
+            {"Strategy": "Shares", "After-tax ending wealth": shares_result.ending_wealth},
+        ]
+    )
+    chart = (
+        alt.Chart(chart_df)
+        .mark_bar()
+        .encode(x="Strategy", y=alt.Y("After-tax ending wealth", title="After-tax ending wealth"), color="Strategy")
+    )
+    st.altair_chart(chart, use_container_width=True)
+
+    st.markdown("**How to read the model**")
+    st.write(
+        "If property only wins when capital growth is high and yield is low, the thesis is mostly leverage plus appreciation. "
+        "If that same property loses badly under the no-negative-gearing stress test, it is tax-sensitive and fragile. "
+        "If shares stay competitive across a wide range of assumptions, they are giving you cleaner, more liquid return per dollar of starting equity."
+    )
+
+with tab_areas:
+    st.subheader("20-30 year suburb and dwelling-type framework")
+
+    selected_area_scenario = st.selectbox(
+        "Area ranking policy lens",
+        options=["Current law", "No negative gearing", "Reduced CGT discount"],
+        key="area_scenario",
+    )
+
+    st.caption(
+        "These are structural heuristics, not suburb-level forecasts. The goal is to identify asset types and area characteristics that become more or less robust if tax settings become less investor-friendly."
+    )
+
+    weight_cols = st.columns(4)
+    weights = {}
+    for idx, key in enumerate(AREA_DIMENSIONS):
+        with weight_cols[idx % 4]:
+            weights[key] = st.slider(AREA_DIMENSIONS[key], 0.0, 3.0, 1.0, 0.25, key=f"weight_{key}")
+
+    area_df = build_area_frame(selected_area_scenario, weights)
+    st.dataframe(area_df, use_container_width=True, hide_index=True)
+
+    top_three = area_df.head(3)
+    bottom_three = area_df.tail(3)
+
+    st.markdown("**Likely long-run winners on this weighting**")
+    for _, row in top_three.iterrows():
+        st.write(f"- **{row['Profile']}** — {row['Why it tends to win or lose']}")
+
+    st.markdown("**Likely long-run losers on this weighting**")
+    for _, row in bottom_three.iterrows():
+        st.write(f"- **{row['Profile']}** — {row['Why it tends to win or lose']}")
+
+    st.markdown("**Rule of thumb**")
+    st.write(
+        "If tax support matters less over time, the stronger assets are usually the ones with scarce land, deep owner-occupier demand, resilient rents, manageable ongoing costs and limited oversupply risk. "
+        "The weaker assets are usually the ones that depend on investor tax benefits, depreciation stories, elastic new supply, or fragile building economics."
+    )
