@@ -4,7 +4,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Dict, List
 
-import altair as alt
 import pandas as pd
 import streamlit as st
 
@@ -520,16 +519,7 @@ with tab_model:
     chart_df = pd.DataFrame(
         [{"Strategy": result.name, "After-tax ending wealth": result.ending_wealth} for result in results]
     )
-    chart = (
-        alt.Chart(chart_df)
-        .mark_bar()
-        .encode(
-            x=alt.X("Strategy", sort=None),
-            y=alt.Y("After-tax ending wealth", title="After-tax ending wealth"),
-            color="Strategy",
-        )
-    )
-    st.altair_chart(chart, use_container_width=True)
+    st.bar_chart(chart_df.set_index("Strategy"), use_container_width=True)
 
     st.markdown("**How the proposal changes the decision**")
     for result in results:
