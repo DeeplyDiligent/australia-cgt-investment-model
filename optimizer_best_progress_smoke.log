@@ -1,0 +1,63 @@
+depth 1: exploring 1 states across 24 years x 2 property prices x 2 stock amounts x 1 subtypes x 3 funding mixes
+depth 1: new best net worth 4,154,587 with 1 buys
+depth 1: new best net worth 4,382,764 with 1 buys
+depth 1: new best net worth 5,308,631 with 1 buys
+depth 1: new best net worth 5,952,679 with 1 buys
+depth 1: feasible 280, retained 5, total evaluations 288
+depth 2: exploring 5 states across 24 years x 2 property prices x 2 stock amounts x 1 subtypes x 3 funding mixes
+depth 2: new best net worth 6,103,606 with 2 buys
+depth 2: new best net worth 6,103,606 with 2 buys
+depth 2: new best net worth 6,225,458 with 2 buys
+depth 2: feasible 1069, retained 5, total evaluations 1680
+{
+  "config": {
+    "maxBuys": 2,
+    "beamWidth": 5,
+    "candidateLimit": 20,
+    "maxEvaluations": null,
+    "minPrice": 800000,
+    "maxPrice": 850000,
+    "stepPrice": 50000,
+    "minStockAmount": 50000,
+    "maxStockAmount": 100000,
+    "stockStep": 50000,
+    "assetTypes": "property,stock",
+    "fundingStepPct": 50,
+    "onePerYear": false,
+    "startYear": 2026,
+    "endYear": 2049,
+    "subtype": "new",
+    "depositSource": "any",
+    "minCashBuffer": 76942,
+    "bestJson": "optimizer_best_progress_smoke_latest.json",
+    "bestJsonl": "optimizer_best_progress_smoke.jsonl",
+    "debug": true
+  },
+  "evaluations": 1680,
+  "best": {
+    "additionalInvestments": 2,
+    "finalNetWorth": 6225458,
+    "finalDebt": 619641,
+    "finalCash": 952201,
+    "finalIpCount": 1,
+    "plan": [
+      {
+        "type": "property",
+        "year": 2026,
+        "price": 850000,
+        "subtype": "new",
+        "depositSource": "mixed",
+        "cashFundingPct": 50
+      },
+      {
+        "type": "stock",
+        "year": 2027,
+        "amount": 100000,
+        "depositSource": "equity",
+        "cashFundingPct": 0
+      }
+    ]
+  },
+  "stoppedEarly": false,
+  "scenarioUrl": "http://localhost:8765/scenario_modeller.html?v=4&scenario=eyJnbG9iYWxzIjp7Imdyb3NzSW5jb21lIjoyMDAwMDAsInBhcnRuZXJHcm9zc0luY29tZSI6NjcwMDAsImluY29tZUdyb3d0aFBjdCI6Mi41LCJtYXJnaW5hbFRheFJhdGUiOjAuMzksImN1cnJlbnRZZWFyU3VycGx1c0ZyYWN0aW9uIjowLjU4MzMzMzMzMzMzMzMzMzQsImNhdGVnb3J5UHJpY2VCYW5kRHJpZnRQY3QiOjQsImxvd2VyQmFuZERyaWZ0UGN0Ijo0LjUsInVwcGVyQmFuZERyaWZ0UGN0Ijo1LjUsImNhc2hSZXR1cm5QY3QiOjQsInN0b2NrR3Jvd3RoUGN0Ijo4LCJzdG9ja0RpdmlkZW5kUGN0IjoyLjUsInN0b2NrRGl2aWRlbmRUYXhSYXRlUGN0IjoxNywicHJvcGVydHlHcm93dGhQY3QiOjQsInByb3BlcnR5WWllbGRQY3QiOjQsInJlbnRHcm93dGhQY3QiOjMsImludGVyZXN0UmF0ZVBjdCI6Ni4zLCJub25JbnRlcmVzdENvc3RQY3QiOjEuMiwicHJpbmNpcGFsUmVwYXlQY3QiOjEuNSwic3RyZXNzQnVmZmVyUGN0IjozLCJyZW50U2hhZGluZ1BjdCI6ODAsImxpdmluZ0V4cGVuc2VzQW5udWFsIjo2MDAwMCwibWluQ2FzaEJ1ZmZlciI6NzY5NDIsImR0aUNhcCI6NiwiZGVwb3NpdFBjdCI6MjAsInN0YW1wRHV0eVBjdCI6NS41LCJwcG9yIjp7Imdyb3d0aFBjdCI6NCwicHJpbmNpcGFsUmVwYXlQY3QiOjMsImxvYW5SYXRlUGN0Ijo1Ljk1LCJyZXBheW1lbnRNb250aGx5Ijo0NDk5LCJyZW1haW5pbmdUZXJtWWVhcnMiOjI4LCJ1c2VDYXNoQXNPZmZzZXQiOnRydWV9fSwiaW52ZXN0bWVudHMiOlt7ImlkIjoib3B0LTEiLCJ0eXBlIjoicHJvcGVydHkiLCJzdWJ0eXBlIjoibmV3IiwiZGVwb3NpdFNvdXJjZSI6Im1peGVkIiwiY2FzaEZ1bmRpbmdQY3QiOjUwLCJuYW1lIjoiT1BUIDIwMjYgQCA4NTAsMDAwIiwieWVhciI6MjAyNiwicHJpY2UiOjg1MDAwMCwiZGVwb3NpdFBjdCI6MjAsInlpZWxkUGN0Ijo0LCJncm93dGhNb2RlIjoiYXV0byIsImludGVyZXN0UGN0Ijo2LjN9LHsiaWQiOiJvcHQtMiIsInR5cGUiOiJzdG9jayIsIm5hbWUiOiJPUFQgc3RvY2sgMjAyNyBAIDEwMCwwMDAiLCJ5ZWFyIjoyMDI3LCJhbW91bnQiOjEwMDAwMCwiZGVwb3NpdFNvdXJjZSI6ImVxdWl0eSIsImNhc2hGdW5kaW5nUGN0IjowfV0sInRhYiI6ImJvcnJvdyJ9"
+}

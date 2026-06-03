@@ -166,13 +166,60 @@ If these changes are enacted broadly as announced:
 4. **shares become a stronger benchmark that property must beat on fundamentals**
 5. **suburbs with real owner-occupier demand and scarce supply still matter more than ever**
 
+## Three additional reforms that change the investment calculus
+
+### 1. Discretionary (family) trust minimum tax from 1 July 2028
+
+The budget includes a separate but closely related reform: a **30% minimum tax on the taxable income of discretionary trusts** from 1 July 2028.
+
+Key design points:
+
+1. The tax is levied on the **trustee**, with beneficiaries receiving non-refundable credits.
+2. **Fixed trusts** (unit trusts), complying superannuation funds, charitable trusts, deceased estates and special disability trusts are **excluded**.
+3. **Primary production income** and certain income for vulnerable minors are excluded.
+4. Crucially, **corporate beneficiaries ("bucket companies") lose their advantage** because trust income will now be taxed at the trust level AND again at the company level — effectively ending that strategy.
+5. **Three years of rollover relief** is available from 1 July 2027 for investors who wish to restructure out of a discretionary trust structure.
+
+**Why it matters for investors:** Many Australians hold investment properties or share portfolios through a family trust to distribute income to lower-rate beneficiaries. That advantage is largely eliminated from 2028. Investors in this position need to urgently model whether restructuring into a unit trust, company, superannuation fund or individual name makes sense — noting that restructuring itself may trigger CGT and stamp duty.
+
+### 2. Widely held trusts and super funds are exempt from the negative gearing restriction
+
+The negative gearing quarantine applies to **individual investors** buying established residential properties. Investments held through:
+
+- complying superannuation funds (including SMSFs)
+- widely held trusts
+- build-to-rent developments
+- private investors supporting Government Housing programs
+
+...are explicitly **exempt** from the quarantine.
+
+This means SMSF investors in established residential property retain the ability to offset rental losses against other income within the fund. It creates a structural advantage for superannuation-based property investment over personal-name or family trust ownership of established residential property.
+
+### 3. Pre-1985 assets lose CGT exemption for post-2027 gains
+
+Assets acquired before 20 September 1985 (pre-CGT assets) are currently **fully exempt** from capital gains tax. Under the proposal:
+
+1. Gains accrued up to 30 June 2027 remain exempt.
+2. Any gain accruing **from 1 July 2027 onwards** is subject to the new indexation and minimum-tax regime.
+3. Taxpayers can use a **market valuation at 1 July 2027** or an ATO apportionment formula to split gains.
+
+This affects holders of long-standing pre-CGT assets — family farms, commercial buildings, business interests held since before 1985. These assets are no longer fully sheltered after 1 July 2027.
+
+### 4. Age Pension and income support recipients are exempt from the 30% CGT minimum tax
+
+Income support recipients, including Age Pension recipients, are **exempt** from the 30% minimum tax on real capital gains. They are still subject to the shift to CPI cost-base indexation (which replaces the 50% discount), but are not subject to the minimum tax floor.
+
+This matters for retirement planning: the minimum tax primarily hits high-income investors who could otherwise time an asset sale into a low-income year. That timing strategy is now less effective for working investors — but retirees on income support retain more flexibility.
+
 ## Sources
 
-1. Budget 2026-27 Tax Explainer, *Negative Gearing and Capital Gains Tax Reform*  
+1. Budget 2026-27, *Tax reform overview*  
+   https://budget.gov.au/content/04-tax-reform.htm
+2. Budget 2026-27 Tax Explainer, *Negative Gearing and Capital Gains Tax Reform*  
    https://budget.gov.au/content/factsheets/download/tax-explainers-negative-gearing-capital-gains-tax.pdf
-2. William Buck, *Federal Budget Analysis 2026 | Negative gearing*  
+3. William Buck, *Federal Budget Analysis 2026 | Negative gearing*  
    https://williambuck.com/tools/federal-budget-2026/negative-gearing/
-3. Clayton Utz, *Australian Budget 2026-27: sweeping tax changes to bring foreseeable and unintended consequences for investors*  
+4. Clayton Utz, *Australian Budget 2026-27: sweeping tax changes to bring foreseeable and unintended consequences for investors*  
    https://www.claytonutz.com/insights/2026/may/australian-budget-2026-27-sweeping-tax-changes-to-bring-foreseeable-and-unintended-consequences-for-investors
-4. Baker McKenzie, *Australia: Budget Bites — CGT Discount and Negative Gearing*  
+5. Baker McKenzie, *Australia: Budget Bites — CGT Discount and Negative Gearing*  
    https://www.bakermckenzie.com/en/insight/publications/2026/05/australia-budget-bites-cgt-discount-and-negative-gearing

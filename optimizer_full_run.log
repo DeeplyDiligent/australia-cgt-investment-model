@@ -1,0 +1,58 @@
+depth 1: exploring 1 states across 24 years x 55 prices x 2 subtypes x 2 funding paths
+depth 1: new best net worth 5,268,358 with 1 buys
+depth 1: new best net worth 5,325,045 with 1 buys
+depth 1: new best net worth 5,341,911 with 1 buys
+depth 1: new best net worth 5,358,777 with 1 buys
+depth 1: new best net worth 5,375,644 with 1 buys
+depth 1: new best net worth 5,946,812 with 1 buys
+depth 1: new best net worth 6,042,280 with 1 buys
+depth 1: new best net worth 6,088,443 with 1 buys
+depth 1: new best net worth 6,691,924 with 1 buys
+depth 1: new best net worth 6,778,281 with 1 buys
+depth 1: new best net worth 6,864,639 with 1 buys
+depth 1: new best net worth 6,950,996 with 1 buys
+depth 1: new best net worth 6,956,121 with 1 buys
+depth 1: new best net worth 7,034,861 with 1 buys
+depth 1: feasible 1822, retained 120, total evaluations 5280
+depth 2: exploring 120 states across 24 years x 55 prices x 2 subtypes x 2 funding paths
+depth 2: feasible 46442, retained 120, total evaluations 527340
+depth 3: exploring 120 states across 24 years x 55 prices x 2 subtypes x 2 funding paths
+depth 3: feasible 3586, retained 120, total evaluations 619960
+depth 4: exploring 120 states across 24 years x 55 prices x 2 subtypes x 2 funding paths
+depth 4: feasible 48, retained 48, total evaluations 647240
+depth 5: exploring 48 states across 24 years x 55 prices x 2 subtypes x 2 funding paths
+{
+  "config": {
+    "maxBuys": 6,
+    "beamWidth": 120,
+    "candidateLimit": 1200,
+    "maxEvaluations": null,
+    "minPrice": 300000,
+    "maxPrice": 3000000,
+    "stepPrice": 50000,
+    "startYear": 2026,
+    "endYear": 2049,
+    "subtype": "any",
+    "depositSource": "any",
+    "minCashBuffer": 76942,
+    "debug": true
+  },
+  "evaluations": 657800,
+  "best": {
+    "additionalProperties": 1,
+    "finalNetWorth": 7034861,
+    "finalDebt": 839564,
+    "finalCash": 1713219,
+    "finalIpCount": 1,
+    "plan": [
+      {
+        "year": 2028,
+        "price": 1150000,
+        "subtype": "new",
+        "depositSource": "cash"
+      }
+    ]
+  },
+  "stoppedEarly": false,
+  "scenarioUrl": "http://localhost:8765/scenario_modeller.html?v=3&scenario=eyJnbG9iYWxzIjp7Imdyb3NzSW5jb21lIjoyMDAwMDAsInBhcnRuZXJHcm9zc0luY29tZSI6NjcwMDAsIm1hcmdpbmFsVGF4UmF0ZSI6MC4zOSwiY3VycmVudFllYXJTdXJwbHVzRnJhY3Rpb24iOjAuNTgzMzMzMzMzMzMzMzMzNCwiY2F0ZWdvcnlQcmljZUJhbmREcmlmdFBjdCI6NCwiY2FzaFJldHVyblBjdCI6NCwic3RvY2tHcm93dGhQY3QiOjgsInN0b2NrRGl2aWRlbmRQY3QiOjIuNSwicHJvcGVydHlHcm93dGhQY3QiOjQsInByb3BlcnR5WWllbGRQY3QiOjQsInJlbnRHcm93dGhQY3QiOjMsImludGVyZXN0UmF0ZVBjdCI6Ni4yLCJub25JbnRlcmVzdENvc3RQY3QiOjEuMiwicHJpbmNpcGFsUmVwYXlQY3QiOjEuNSwic3RyZXNzQnVmZmVyUGN0IjozLCJyZW50U2hhZGluZ1BjdCI6ODAsImxpdmluZ0V4cGVuc2VzQW5udWFsIjo2MDAwMCwibWluQ2FzaEJ1ZmZlciI6NzY5NDIsImR0aUNhcCI6NiwiZGVwb3NpdFBjdCI6MjAsInN0YW1wRHV0eVBjdCI6NS41LCJwcG9yIjp7Imdyb3d0aFBjdCI6NCwicHJpbmNpcGFsUmVwYXlQY3QiOjN9fSwiaW52ZXN0bWVudHMiOlt7ImlkIjoib3B0LTEiLCJ0eXBlIjoicHJvcGVydHkiLCJzdWJ0eXBlIjoibmV3IiwiZGVwb3NpdFNvdXJjZSI6ImNhc2giLCJuYW1lIjoiT1BUIDIwMjggQCAxLDE1MCwwMDAiLCJ5ZWFyIjoyMDI4LCJwcmljZSI6MTE1MDAwMCwiZGVwb3NpdFBjdCI6MjAsInlpZWxkUGN0Ijo0LCJncm93dGhNb2RlIjoiYXV0byIsImludGVyZXN0UGN0Ijo2LjJ9XSwidGFiIjoiYm9ycm93In0"
+}

@@ -1,0 +1,2808 @@
+{
+  "updatedAt": "2026-05-28T11:52:53.642Z",
+  "evaluations": 5038950,
+  "depth": 10,
+  "stoppedEarly": false,
+  "config": {
+    "maxBuys": 50,
+    "beamWidth": 80,
+    "candidateLimit": 800,
+    "maxEvaluations": null,
+    "minPrice": 300000,
+    "maxPrice": 3000000,
+    "stepPrice": 50000,
+    "minStockAmount": 10000,
+    "maxStockAmount": 500000,
+    "stockStep": 10000,
+    "assetTypes": "property,stock",
+    "fundingStepPct": 25,
+    "onePerYear": false,
+    "startYear": 2026,
+    "endYear": 2049,
+    "subtype": "new",
+    "depositSource": "any",
+    "minCashBuffer": 76942,
+    "bestJson": "optimizer_50_buys_deeper_latest.json",
+    "bestJsonl": "optimizer_50_buys_deeper_best.jsonl",
+    "debug": true
+  },
+  "best": {
+    "additionalInvestments": 10,
+    "finalNetWorth": 8652893,
+    "finalDebt": 2739220,
+    "finalCash": 340903,
+    "finalIpCount": 1,
+    "plan": [
+      {
+        "type": "property",
+        "year": 2026,
+        "price": 850000,
+        "subtype": "new",
+        "depositSource": "mixed",
+        "cashFundingPct": 50
+      },
+      {
+        "type": "stock",
+        "year": 2030,
+        "amount": 500000,
+        "depositSource": "mixed",
+        "cashFundingPct": 25
+      },
+      {
+        "type": "stock",
+        "year": 2035,
+        "amount": 370000,
+        "depositSource": "mixed",
+        "cashFundingPct": 25
+      },
+      {
+        "type": "stock",
+        "year": 2039,
+        "amount": 500000,
+        "depositSource": "mixed",
+        "cashFundingPct": 50
+      },
+      {
+        "type": "stock",
+        "year": 2042,
+        "amount": 430000,
+        "depositSource": "mixed",
+        "cashFundingPct": 75
+      },
+      {
+        "type": "stock",
+        "year": 2044,
+        "amount": 470000,
+        "depositSource": "mixed",
+        "cashFundingPct": 50
+      },
+      {
+        "type": "stock",
+        "year": 2046,
+        "amount": 480000,
+        "depositSource": "mixed",
+        "cashFundingPct": 75
+      },
+      {
+        "type": "stock",
+        "year": 2047,
+        "amount": 280000,
+        "depositSource": "mixed",
+        "cashFundingPct": 75
+      },
+      {
+        "type": "stock",
+        "year": 2048,
+        "amount": 300000,
+        "depositSource": "mixed",
+        "cashFundingPct": 75
+      },
+      {
+        "type": "stock",
+        "year": 2048,
+        "amount": 30000,
+        "depositSource": "equity",
+        "cashFundingPct": 0
+      }
+    ]
+  },
+  "bestHistory": [
+    {
+      "kind": "initial",
+      "depth": 0,
+      "evaluations": 0,
+      "foundAt": "2026-05-28T11:35:18.022Z",
+      "finalNetWorth": 3927146,
+      "additionalInvestments": 0
+    },
+    {
+      "kind": "new-best",
+      "depth": 1,
+      "evaluations": 1,
+      "foundAt": "2026-05-28T11:35:18.101Z",
+      "finalNetWorth": 3972469,
+      "additionalInvestments": 1
+    },
+    {
+      "kind": "new-best",
+      "depth": 1,
+      "evaluations": 6,
+      "foundAt": "2026-05-28T11:35:18.110Z",
+      "finalNetWorth": 4017998,
+      "additionalInvestments": 1
+    },
+    {
+      "kind": "new-best",
+      "depth": 1,
+      "evaluations": 11,
+      "foundAt": "2026-05-28T11:35:18.116Z",
+      "finalNetWorth": 4063528,
+      "additionalInvestments": 1
+    },
+    {
+      "kind": "new-best",
+      "depth": 1,
+      "evaluations": 16,
+      "foundAt": "2026-05-28T11:35:18.121Z",
+      "finalNetWorth": 4109057,
+      "additionalInvestments": 1
+    },
+    {
+      "kind": "new-best",
+      "depth": 1,
+      "evaluations": 21,
+      "foundAt": "2026-05-28T11:35:18.128Z",
+      "finalNetWorth": 4154587,
+      "additionalInvestments": 1
+    },
+    {
+      "kind": "new-best",
+      "depth": 1,
+      "evaluations": 26,
+      "foundAt": "2026-05-28T11:35:18.133Z",
+      "finalNetWorth": 4200116,
+      "additionalInvestments": 1
+    },
+    {
+      "kind": "new-best",
+      "depth": 1,
+      "evaluations": 31,
+      "foundAt": "2026-05-28T11:35:18.138Z",
+      "finalNetWorth": 4245646,
+      "additionalInvestments": 1
+    },
+    {
+      "kind": "new-best",
+      "depth": 1,
+      "evaluations": 36,
+      "foundAt": "2026-05-28T11:35:18.144Z",
+      "finalNetWorth": 4291236,
+      "additionalInvestments": 1
+    },
+    {
+      "kind": "new-best",
+      "depth": 1,
+      "evaluations": 41,
+      "foundAt": "2026-05-28T11:35:18.149Z",
+      "finalNetWorth": 4337000,
+      "additionalInvestments": 1
+    },
+    {
+      "kind": "new-best",
+      "depth": 1,
+      "evaluations": 46,
+      "foundAt": "2026-05-28T11:35:18.154Z",
+      "finalNetWorth": 4382764,
+      "additionalInvestments": 1
+    },
+    {
+      "kind": "new-best",
+      "depth": 1,
+      "evaluations": 51,
+      "foundAt": "2026-05-28T11:35:18.160Z",
+      "finalNetWorth": 4428528,
+      "additionalInvestments": 1
+    },
+    {
+      "kind": "new-best",
+      "depth": 1,
+      "evaluations": 56,
+      "foundAt": "2026-05-28T11:35:18.168Z",
+      "finalNetWorth": 4474292,
+      "additionalInvestments": 1
+    },
+    {
+      "kind": "new-best",
+      "depth": 1,
+      "evaluations": 62,
+      "foundAt": "2026-05-28T11:35:18.178Z",
+      "finalNetWorth": 4487557,
+      "additionalInvestments": 1
+    },
+    {
+      "kind": "new-best",
+      "depth": 1,
+      "evaluations": 67,
+      "foundAt": "2026-05-28T11:35:18.184Z",
+      "finalNetWorth": 4530821,
+      "additionalInvestments": 1
+    },
+    {
+      "kind": "new-best",
+      "depth": 1,
+      "evaluations": 72,
+      "foundAt": "2026-05-28T11:35:18.189Z",
+      "finalNetWorth": 4574123,
+      "additionalInvestments": 1
+    },
+    {
+      "kind": "new-best",
+      "depth": 1,
+      "evaluations": 77,
+      "foundAt": "2026-05-28T11:35:18.194Z",
+      "finalNetWorth": 4617650,
+      "additionalInvestments": 1
+    },
+    {
+      "kind": "new-best",
+      "depth": 1,
+      "evaluations": 83,
+      "foundAt": "2026-05-28T11:35:18.199Z",
+      "finalNetWorth": 4618677,
+      "additionalInvestments": 1
+    },
+    {
+      "kind": "new-best",
+      "depth": 1,
+      "evaluations": 88,
+      "foundAt": "2026-05-28T11:35:18.204Z",
+      "finalNetWorth": 4659703,
+      "additionalInvestments": 1
+    },
+    {
+      "kind": "new-best",
+      "depth": 1,
+      "evaluations": 93,
+      "foundAt": "2026-05-28T11:35:18.210Z",
+      "finalNetWorth": 4700730,
+      "additionalInvestments": 1
+    },
+    {
+      "kind": "new-best",
+      "depth": 1,
+      "evaluations": 98,
+      "foundAt": "2026-05-28T11:35:18.216Z",
+      "finalNetWorth": 4741757,
+      "additionalInvestments": 1
+    },
+    {
+      "kind": "new-best",
+      "depth": 1,
+      "evaluations": 103,
+      "foundAt": "2026-05-28T11:35:18.220Z",
+      "finalNetWorth": 4782784,
+      "additionalInvestments": 1
+    },
+    {
+      "kind": "new-best",
+      "depth": 1,
+      "evaluations": 108,
+      "foundAt": "2026-05-28T11:35:18.226Z",
+      "finalNetWorth": 4823811,
+      "additionalInvestments": 1
+    },
+    {
+      "kind": "new-best",
+      "depth": 1,
+      "evaluations": 113,
+      "foundAt": "2026-05-28T11:35:18.232Z",
+      "finalNetWorth": 4865059,
+      "additionalInvestments": 1
+    },
+    {
+      "kind": "new-best",
+      "depth": 1,
+      "evaluations": 118,
+      "foundAt": "2026-05-28T11:35:18.236Z",
+      "finalNetWorth": 4906350,
+      "additionalInvestments": 1
+    },
+    {
+      "kind": "new-best",
+      "depth": 1,
+      "evaluations": 282,
+      "foundAt": "2026-05-28T11:35:18.313Z",
+      "finalNetWorth": 4994422,
+      "additionalInvestments": 1
+    },
+    {
+      "kind": "new-best",
+      "depth": 1,
+      "evaluations": 288,
+      "foundAt": "2026-05-28T11:35:18.319Z",
+      "finalNetWorth": 5043649,
+      "additionalInvestments": 1
+    },
+    {
+      "kind": "new-best",
+      "depth": 1,
+      "evaluations": 293,
+      "foundAt": "2026-05-28T11:35:18.325Z",
+      "finalNetWorth": 5131891,
+      "additionalInvestments": 1
+    },
+    {
+      "kind": "new-best",
+      "depth": 1,
+      "evaluations": 298,
+      "foundAt": "2026-05-28T11:35:18.330Z",
+      "finalNetWorth": 5219920,
+      "additionalInvestments": 1
+    },
+    {
+      "kind": "new-best",
+      "depth": 1,
+      "evaluations": 303,
+      "foundAt": "2026-05-28T11:35:18.336Z",
+      "finalNetWorth": 5308631,
+      "additionalInvestments": 1
+    },
+    {
+      "kind": "new-best",
+      "depth": 1,
+      "evaluations": 308,
+      "foundAt": "2026-05-28T11:35:18.341Z",
+      "finalNetWorth": 5952679,
+      "additionalInvestments": 1
+    },
+    {
+      "kind": "new-best",
+      "depth": 1,
+      "evaluations": 313,
+      "foundAt": "2026-05-28T11:35:18.348Z",
+      "finalNetWorth": 6069841,
+      "additionalInvestments": 1
+    },
+    {
+      "kind": "new-best",
+      "depth": 1,
+      "evaluations": 318,
+      "foundAt": "2026-05-28T11:35:18.357Z",
+      "finalNetWorth": 6157729,
+      "additionalInvestments": 1
+    },
+    {
+      "kind": "new-best",
+      "depth": 1,
+      "evaluations": 1389,
+      "foundAt": "2026-05-28T11:35:18.712Z",
+      "finalNetWorth": 6192186,
+      "additionalInvestments": 1
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 12601,
+      "foundAt": "2026-05-28T11:35:21.331Z",
+      "finalNetWorth": 6226648,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 12606,
+      "foundAt": "2026-05-28T11:35:21.337Z",
+      "finalNetWorth": 6248687,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 12611,
+      "foundAt": "2026-05-28T11:35:21.343Z",
+      "finalNetWorth": 6270725,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 12617,
+      "foundAt": "2026-05-28T11:35:21.348Z",
+      "finalNetWorth": 6292764,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 13146,
+      "foundAt": "2026-05-28T11:35:21.571Z",
+      "finalNetWorth": 6306027,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 13151,
+      "foundAt": "2026-05-28T11:35:21.580Z",
+      "finalNetWorth": 6326151,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 13156,
+      "foundAt": "2026-05-28T11:35:21.584Z",
+      "finalNetWorth": 6346018,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 13161,
+      "foundAt": "2026-05-28T11:35:21.588Z",
+      "finalNetWorth": 6365885,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 13166,
+      "foundAt": "2026-05-28T11:35:21.597Z",
+      "finalNetWorth": 6385752,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 13171,
+      "foundAt": "2026-05-28T11:35:21.603Z",
+      "finalNetWorth": 6405619,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 13177,
+      "foundAt": "2026-05-28T11:35:21.607Z",
+      "finalNetWorth": 6425486,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 13182,
+      "foundAt": "2026-05-28T11:35:21.612Z",
+      "finalNetWorth": 6445353,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 13187,
+      "foundAt": "2026-05-28T11:35:21.616Z",
+      "finalNetWorth": 6465220,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 13721,
+      "foundAt": "2026-05-28T11:35:21.844Z",
+      "finalNetWorth": 6480319,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 13722,
+      "foundAt": "2026-05-28T11:35:21.864Z",
+      "finalNetWorth": 6480319,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 13726,
+      "foundAt": "2026-05-28T11:35:21.869Z",
+      "finalNetWorth": 6498544,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 13731,
+      "foundAt": "2026-05-28T11:35:21.874Z",
+      "finalNetWorth": 6516568,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 13736,
+      "foundAt": "2026-05-28T11:35:21.881Z",
+      "finalNetWorth": 6534377,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 13742,
+      "foundAt": "2026-05-28T11:35:21.885Z",
+      "finalNetWorth": 6552186,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 13747,
+      "foundAt": "2026-05-28T11:35:21.889Z",
+      "finalNetWorth": 6569995,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 13752,
+      "foundAt": "2026-05-28T11:35:21.896Z",
+      "finalNetWorth": 6587805,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 14286,
+      "foundAt": "2026-05-28T11:35:22.143Z",
+      "finalNetWorth": 6588099,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 14291,
+      "foundAt": "2026-05-28T11:35:22.147Z",
+      "finalNetWorth": 6604372,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 14296,
+      "foundAt": "2026-05-28T11:35:22.151Z",
+      "finalNetWorth": 6620646,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 14301,
+      "foundAt": "2026-05-28T11:35:22.155Z",
+      "finalNetWorth": 6636917,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 14841,
+      "foundAt": "2026-05-28T11:35:22.500Z",
+      "finalNetWorth": 6643761,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 14846,
+      "foundAt": "2026-05-28T11:35:22.578Z",
+      "finalNetWorth": 6658152,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 14851,
+      "foundAt": "2026-05-28T11:35:22.582Z",
+      "finalNetWorth": 6672543,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 14856,
+      "foundAt": "2026-05-28T11:35:22.586Z",
+      "finalNetWorth": 6686935,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 14861,
+      "foundAt": "2026-05-28T11:35:22.590Z",
+      "finalNetWorth": 6701326,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 14866,
+      "foundAt": "2026-05-28T11:35:22.605Z",
+      "finalNetWorth": 6715717,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 15411,
+      "foundAt": "2026-05-28T11:35:22.952Z",
+      "finalNetWorth": 6724850,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 15416,
+      "foundAt": "2026-05-28T11:35:22.968Z",
+      "finalNetWorth": 6740005,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 15421,
+      "foundAt": "2026-05-28T11:35:22.972Z",
+      "finalNetWorth": 6755159,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 15426,
+      "foundAt": "2026-05-28T11:35:22.978Z",
+      "finalNetWorth": 6770950,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 15431,
+      "foundAt": "2026-05-28T11:35:22.982Z",
+      "finalNetWorth": 6786880,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 15981,
+      "foundAt": "2026-05-28T11:35:23.197Z",
+      "finalNetWorth": 6797178,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 15986,
+      "foundAt": "2026-05-28T11:35:23.206Z",
+      "finalNetWorth": 6811463,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 15991,
+      "foundAt": "2026-05-28T11:35:23.217Z",
+      "finalNetWorth": 6826146,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 15996,
+      "foundAt": "2026-05-28T11:35:23.232Z",
+      "finalNetWorth": 6841199,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 38002,
+      "foundAt": "2026-05-28T11:35:26.695Z",
+      "finalNetWorth": 6858794,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 38007,
+      "foundAt": "2026-05-28T11:35:26.699Z",
+      "finalNetWorth": 6878826,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 38012,
+      "foundAt": "2026-05-28T11:35:26.703Z",
+      "finalNetWorth": 6899069,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 38017,
+      "foundAt": "2026-05-28T11:35:26.706Z",
+      "finalNetWorth": 6919887,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 38022,
+      "foundAt": "2026-05-28T11:35:26.711Z",
+      "finalNetWorth": 6940705,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 38027,
+      "foundAt": "2026-05-28T11:35:26.716Z",
+      "finalNetWorth": 6961523,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 2,
+      "evaluations": 38032,
+      "foundAt": "2026-05-28T11:35:26.719Z",
+      "finalNetWorth": 6982341,
+      "additionalInvestments": 2
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 861529,
+      "foundAt": "2026-05-28T11:37:18.592Z",
+      "finalNetWorth": 7003193,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 862056,
+      "foundAt": "2026-05-28T11:37:18.707Z",
+      "finalNetWorth": 7019886,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 862061,
+      "foundAt": "2026-05-28T11:37:18.713Z",
+      "finalNetWorth": 7038990,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 862066,
+      "foundAt": "2026-05-28T11:37:18.717Z",
+      "finalNetWorth": 7058093,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 862071,
+      "foundAt": "2026-05-28T11:37:18.722Z",
+      "finalNetWorth": 7077197,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 862076,
+      "foundAt": "2026-05-28T11:37:18.726Z",
+      "finalNetWorth": 7096301,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 862082,
+      "foundAt": "2026-05-28T11:37:18.730Z",
+      "finalNetWorth": 7115562,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 862087,
+      "foundAt": "2026-05-28T11:37:18.734Z",
+      "finalNetWorth": 7135325,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 862621,
+      "foundAt": "2026-05-28T11:37:18.858Z",
+      "finalNetWorth": 7152225,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 862626,
+      "foundAt": "2026-05-28T11:37:18.864Z",
+      "finalNetWorth": 7169725,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 862632,
+      "foundAt": "2026-05-28T11:37:18.867Z",
+      "finalNetWorth": 7187190,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 863166,
+      "foundAt": "2026-05-28T11:37:18.954Z",
+      "finalNetWorth": 7192304,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 863171,
+      "foundAt": "2026-05-28T11:37:18.962Z",
+      "finalNetWorth": 7208043,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 863176,
+      "foundAt": "2026-05-28T11:37:18.969Z",
+      "finalNetWorth": 7223781,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 863181,
+      "foundAt": "2026-05-28T11:37:18.977Z",
+      "finalNetWorth": 7239519,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 863187,
+      "foundAt": "2026-05-28T11:37:18.986Z",
+      "finalNetWorth": 7255258,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 863192,
+      "foundAt": "2026-05-28T11:37:18.993Z",
+      "finalNetWorth": 7271037,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 863731,
+      "foundAt": "2026-05-28T11:37:19.148Z",
+      "finalNetWorth": 7275652,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 863736,
+      "foundAt": "2026-05-28T11:37:19.156Z",
+      "finalNetWorth": 7289979,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 863742,
+      "foundAt": "2026-05-28T11:37:19.164Z",
+      "finalNetWorth": 7304306,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 863747,
+      "foundAt": "2026-05-28T11:37:19.174Z",
+      "finalNetWorth": 7318633,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 863752,
+      "foundAt": "2026-05-28T11:37:19.178Z",
+      "finalNetWorth": 7333146,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 864297,
+      "foundAt": "2026-05-28T11:37:19.294Z",
+      "finalNetWorth": 7336019,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 864302,
+      "foundAt": "2026-05-28T11:37:19.300Z",
+      "finalNetWorth": 7349040,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 864307,
+      "foundAt": "2026-05-28T11:37:19.309Z",
+      "finalNetWorth": 7361833,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 864312,
+      "foundAt": "2026-05-28T11:37:19.317Z",
+      "finalNetWorth": 7374584,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 864317,
+      "foundAt": "2026-05-28T11:37:19.321Z",
+      "finalNetWorth": 7387415,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 864322,
+      "foundAt": "2026-05-28T11:37:19.326Z",
+      "finalNetWorth": 7400756,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 864327,
+      "foundAt": "2026-05-28T11:37:19.330Z",
+      "finalNetWorth": 7414097,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 864332,
+      "foundAt": "2026-05-28T11:37:19.334Z",
+      "finalNetWorth": 7427427,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 864337,
+      "foundAt": "2026-05-28T11:37:19.340Z",
+      "finalNetWorth": 7440730,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 864342,
+      "foundAt": "2026-05-28T11:37:19.345Z",
+      "finalNetWorth": 7454032,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 864897,
+      "foundAt": "2026-05-28T11:37:19.474Z",
+      "finalNetWorth": 7455429,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 864902,
+      "foundAt": "2026-05-28T11:37:19.479Z",
+      "finalNetWorth": 7467541,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 864907,
+      "foundAt": "2026-05-28T11:37:19.484Z",
+      "finalNetWorth": 7479654,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 3,
+      "evaluations": 864912,
+      "foundAt": "2026-05-28T11:37:19.491Z",
+      "finalNetWorth": 7491767,
+      "additionalInvestments": 3
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1641154,
+      "foundAt": "2026-05-28T11:39:27.382Z",
+      "finalNetWorth": 7503880,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1641160,
+      "foundAt": "2026-05-28T11:39:27.390Z",
+      "finalNetWorth": 7515993,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1641165,
+      "foundAt": "2026-05-28T11:39:27.395Z",
+      "finalNetWorth": 7528106,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1641691,
+      "foundAt": "2026-05-28T11:39:27.498Z",
+      "finalNetWorth": 7533474,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1641696,
+      "foundAt": "2026-05-28T11:39:27.505Z",
+      "finalNetWorth": 7543901,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1641701,
+      "foundAt": "2026-05-28T11:39:27.512Z",
+      "finalNetWorth": 7554591,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1641707,
+      "foundAt": "2026-05-28T11:39:27.517Z",
+      "finalNetWorth": 7565570,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1641712,
+      "foundAt": "2026-05-28T11:39:27.521Z",
+      "finalNetWorth": 7576550,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1641718,
+      "foundAt": "2026-05-28T11:39:27.526Z",
+      "finalNetWorth": 7587529,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1641723,
+      "foundAt": "2026-05-28T11:39:27.530Z",
+      "finalNetWorth": 7598509,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1641728,
+      "foundAt": "2026-05-28T11:39:27.534Z",
+      "finalNetWorth": 7609488,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1641733,
+      "foundAt": "2026-05-28T11:39:27.538Z",
+      "finalNetWorth": 7620468,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1641738,
+      "foundAt": "2026-05-28T11:39:27.543Z",
+      "finalNetWorth": 7631447,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1642277,
+      "foundAt": "2026-05-28T11:39:27.645Z",
+      "finalNetWorth": 7639110,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1642282,
+      "foundAt": "2026-05-28T11:39:27.650Z",
+      "finalNetWorth": 7648510,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1642288,
+      "foundAt": "2026-05-28T11:39:27.657Z",
+      "finalNetWorth": 7657910,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1642293,
+      "foundAt": "2026-05-28T11:39:27.665Z",
+      "finalNetWorth": 7667571,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1642298,
+      "foundAt": "2026-05-28T11:39:27.669Z",
+      "finalNetWorth": 7677504,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1642303,
+      "foundAt": "2026-05-28T11:39:27.673Z",
+      "finalNetWorth": 7687438,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1642308,
+      "foundAt": "2026-05-28T11:39:27.678Z",
+      "finalNetWorth": 7697372,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1642313,
+      "foundAt": "2026-05-28T11:39:27.682Z",
+      "finalNetWorth": 7707306,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1642318,
+      "foundAt": "2026-05-28T11:39:27.686Z",
+      "finalNetWorth": 7717240,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1642323,
+      "foundAt": "2026-05-28T11:39:27.691Z",
+      "finalNetWorth": 7727174,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1642328,
+      "foundAt": "2026-05-28T11:39:27.695Z",
+      "finalNetWorth": 7737108,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1642878,
+      "foundAt": "2026-05-28T11:39:27.790Z",
+      "finalNetWorth": 7740904,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1642883,
+      "foundAt": "2026-05-28T11:39:27.797Z",
+      "finalNetWorth": 7749358,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1642888,
+      "foundAt": "2026-05-28T11:39:27.802Z",
+      "finalNetWorth": 7757812,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1642893,
+      "foundAt": "2026-05-28T11:39:27.807Z",
+      "finalNetWorth": 7766266,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1642898,
+      "foundAt": "2026-05-28T11:39:27.811Z",
+      "finalNetWorth": 7775017,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1642903,
+      "foundAt": "2026-05-28T11:39:27.816Z",
+      "finalNetWorth": 7783986,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1642908,
+      "foundAt": "2026-05-28T11:39:27.820Z",
+      "finalNetWorth": 7792956,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1642913,
+      "foundAt": "2026-05-28T11:39:27.824Z",
+      "finalNetWorth": 7801925,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1642918,
+      "foundAt": "2026-05-28T11:39:27.828Z",
+      "finalNetWorth": 7810895,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1643483,
+      "foundAt": "2026-05-28T11:39:27.953Z",
+      "finalNetWorth": 7817047,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1643488,
+      "foundAt": "2026-05-28T11:39:27.959Z",
+      "finalNetWorth": 7824621,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1643493,
+      "foundAt": "2026-05-28T11:39:27.965Z",
+      "finalNetWorth": 7832195,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1643498,
+      "foundAt": "2026-05-28T11:39:27.969Z",
+      "finalNetWorth": 7839768,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1650298,
+      "foundAt": "2026-05-28T11:39:29.345Z",
+      "finalNetWorth": 7841943,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1650303,
+      "foundAt": "2026-05-28T11:39:29.353Z",
+      "finalNetWorth": 7850912,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1650308,
+      "foundAt": "2026-05-28T11:39:29.358Z",
+      "finalNetWorth": 7859882,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1650313,
+      "foundAt": "2026-05-28T11:39:29.362Z",
+      "finalNetWorth": 7868851,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1650318,
+      "foundAt": "2026-05-28T11:39:29.367Z",
+      "finalNetWorth": 7877821,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1650323,
+      "foundAt": "2026-05-28T11:39:29.371Z",
+      "finalNetWorth": 7886790,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1818843,
+      "foundAt": "2026-05-28T11:39:59.834Z",
+      "finalNetWorth": 7895293,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 4,
+      "evaluations": 1818848,
+      "foundAt": "2026-05-28T11:39:59.840Z",
+      "finalNetWorth": 7905227,
+      "additionalInvestments": 4
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2211829,
+      "foundAt": "2026-05-28T11:41:07.092Z",
+      "finalNetWorth": 7915161,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2211835,
+      "foundAt": "2026-05-28T11:41:07.103Z",
+      "finalNetWorth": 7925095,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2211840,
+      "foundAt": "2026-05-28T11:41:07.108Z",
+      "finalNetWorth": 7935029,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2212366,
+      "foundAt": "2026-05-28T11:41:07.284Z",
+      "finalNetWorth": 7939044,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2212371,
+      "foundAt": "2026-05-28T11:41:07.290Z",
+      "finalNetWorth": 7947498,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2212376,
+      "foundAt": "2026-05-28T11:41:07.296Z",
+      "finalNetWorth": 7955952,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2212381,
+      "foundAt": "2026-05-28T11:41:07.303Z",
+      "finalNetWorth": 7964886,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2212387,
+      "foundAt": "2026-05-28T11:41:07.314Z",
+      "finalNetWorth": 7973856,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2212392,
+      "foundAt": "2026-05-28T11:41:07.327Z",
+      "finalNetWorth": 7982825,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2212398,
+      "foundAt": "2026-05-28T11:41:07.342Z",
+      "finalNetWorth": 7991795,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2212403,
+      "foundAt": "2026-05-28T11:41:07.358Z",
+      "finalNetWorth": 8000764,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2212408,
+      "foundAt": "2026-05-28T11:41:07.369Z",
+      "finalNetWorth": 8009734,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2212413,
+      "foundAt": "2026-05-28T11:41:07.378Z",
+      "finalNetWorth": 8018704,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2212418,
+      "foundAt": "2026-05-28T11:41:07.394Z",
+      "finalNetWorth": 8027673,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2212424,
+      "foundAt": "2026-05-28T11:41:07.409Z",
+      "finalNetWorth": 8036643,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2212429,
+      "foundAt": "2026-05-28T11:41:07.422Z",
+      "finalNetWorth": 8045612,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2212968,
+      "foundAt": "2026-05-28T11:41:07.680Z",
+      "finalNetWorth": 8046000,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2212973,
+      "foundAt": "2026-05-28T11:41:07.695Z",
+      "finalNetWorth": 8053574,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2212978,
+      "foundAt": "2026-05-28T11:41:07.704Z",
+      "finalNetWorth": 8061148,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2212983,
+      "foundAt": "2026-05-28T11:41:07.718Z",
+      "finalNetWorth": 8068721,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2212988,
+      "foundAt": "2026-05-28T11:41:07.734Z",
+      "finalNetWorth": 8076295,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2212993,
+      "foundAt": "2026-05-28T11:41:07.744Z",
+      "finalNetWorth": 8083869,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2212998,
+      "foundAt": "2026-05-28T11:41:07.753Z",
+      "finalNetWorth": 8091597,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2213003,
+      "foundAt": "2026-05-28T11:41:07.760Z",
+      "finalNetWorth": 8099668,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2213008,
+      "foundAt": "2026-05-28T11:41:07.768Z",
+      "finalNetWorth": 8107739,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2213014,
+      "foundAt": "2026-05-28T11:41:07.774Z",
+      "finalNetWorth": 8115810,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2213568,
+      "foundAt": "2026-05-28T11:41:07.933Z",
+      "finalNetWorth": 8119477,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2213573,
+      "foundAt": "2026-05-28T11:41:07.945Z",
+      "finalNetWorth": 8126231,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2213578,
+      "foundAt": "2026-05-28T11:41:07.956Z",
+      "finalNetWorth": 8132986,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2213583,
+      "foundAt": "2026-05-28T11:41:07.967Z",
+      "finalNetWorth": 8139741,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2213588,
+      "foundAt": "2026-05-28T11:41:07.974Z",
+      "finalNetWorth": 8146495,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2213593,
+      "foundAt": "2026-05-28T11:41:07.979Z",
+      "finalNetWorth": 8153250,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2213598,
+      "foundAt": "2026-05-28T11:41:07.984Z",
+      "finalNetWorth": 8160004,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2213603,
+      "foundAt": "2026-05-28T11:41:07.989Z",
+      "finalNetWorth": 8166759,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2213609,
+      "foundAt": "2026-05-28T11:41:07.994Z",
+      "finalNetWorth": 8173514,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 5,
+      "evaluations": 2213614,
+      "foundAt": "2026-05-28T11:41:07.999Z",
+      "finalNetWorth": 8180268,
+      "additionalInvestments": 5
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2650726,
+      "foundAt": "2026-05-28T11:42:33.056Z",
+      "finalNetWorth": 8187243,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2650731,
+      "foundAt": "2026-05-28T11:42:33.063Z",
+      "finalNetWorth": 8194477,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2650736,
+      "foundAt": "2026-05-28T11:42:33.068Z",
+      "finalNetWorth": 8201712,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2650741,
+      "foundAt": "2026-05-28T11:42:33.074Z",
+      "finalNetWorth": 8208946,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2650746,
+      "foundAt": "2026-05-28T11:42:33.078Z",
+      "finalNetWorth": 8216181,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2650751,
+      "foundAt": "2026-05-28T11:42:33.082Z",
+      "finalNetWorth": 8223415,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2650756,
+      "foundAt": "2026-05-28T11:42:33.088Z",
+      "finalNetWorth": 8230650,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2650761,
+      "foundAt": "2026-05-28T11:42:33.093Z",
+      "finalNetWorth": 8237885,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2650766,
+      "foundAt": "2026-05-28T11:42:33.097Z",
+      "finalNetWorth": 8245119,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2651301,
+      "foundAt": "2026-05-28T11:42:33.210Z",
+      "finalNetWorth": 8245932,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2651306,
+      "foundAt": "2026-05-28T11:42:33.215Z",
+      "finalNetWorth": 8251925,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2651311,
+      "foundAt": "2026-05-28T11:42:33.222Z",
+      "finalNetWorth": 8257918,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2651316,
+      "foundAt": "2026-05-28T11:42:33.227Z",
+      "finalNetWorth": 8263911,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2651321,
+      "foundAt": "2026-05-28T11:42:33.233Z",
+      "finalNetWorth": 8269904,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2651326,
+      "foundAt": "2026-05-28T11:42:33.238Z",
+      "finalNetWorth": 8275897,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2651332,
+      "foundAt": "2026-05-28T11:42:33.243Z",
+      "finalNetWorth": 8281890,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2651337,
+      "foundAt": "2026-05-28T11:42:33.248Z",
+      "finalNetWorth": 8287883,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2651342,
+      "foundAt": "2026-05-28T11:42:33.253Z",
+      "finalNetWorth": 8293876,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2651347,
+      "foundAt": "2026-05-28T11:42:33.258Z",
+      "finalNetWorth": 8299870,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2651352,
+      "foundAt": "2026-05-28T11:42:33.262Z",
+      "finalNetWorth": 8305863,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2651357,
+      "foundAt": "2026-05-28T11:42:33.267Z",
+      "finalNetWorth": 8311856,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2651363,
+      "foundAt": "2026-05-28T11:42:33.273Z",
+      "finalNetWorth": 8317849,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2651368,
+      "foundAt": "2026-05-28T11:42:33.278Z",
+      "finalNetWorth": 8323842,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2651373,
+      "foundAt": "2026-05-28T11:42:33.282Z",
+      "finalNetWorth": 8329835,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2651927,
+      "foundAt": "2026-05-28T11:42:33.370Z",
+      "finalNetWorth": 8332238,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2651933,
+      "foundAt": "2026-05-28T11:42:33.376Z",
+      "finalNetWorth": 8337524,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2651938,
+      "foundAt": "2026-05-28T11:42:33.381Z",
+      "finalNetWorth": 8342809,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2651943,
+      "foundAt": "2026-05-28T11:42:33.386Z",
+      "finalNetWorth": 8348095,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2651948,
+      "foundAt": "2026-05-28T11:42:33.390Z",
+      "finalNetWorth": 8353380,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2651953,
+      "foundAt": "2026-05-28T11:42:33.395Z",
+      "finalNetWorth": 8358666,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2651958,
+      "foundAt": "2026-05-28T11:42:33.399Z",
+      "finalNetWorth": 8363952,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2651963,
+      "foundAt": "2026-05-28T11:42:33.404Z",
+      "finalNetWorth": 8369237,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2651968,
+      "foundAt": "2026-05-28T11:42:33.408Z",
+      "finalNetWorth": 8374523,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2651973,
+      "foundAt": "2026-05-28T11:42:33.413Z",
+      "finalNetWorth": 8379808,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2651978,
+      "foundAt": "2026-05-28T11:42:33.420Z",
+      "finalNetWorth": 8385094,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2651983,
+      "foundAt": "2026-05-28T11:42:33.425Z",
+      "finalNetWorth": 8390379,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2651988,
+      "foundAt": "2026-05-28T11:42:33.431Z",
+      "finalNetWorth": 8395665,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2651993,
+      "foundAt": "2026-05-28T11:42:33.437Z",
+      "finalNetWorth": 8400951,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2651998,
+      "foundAt": "2026-05-28T11:42:33.442Z",
+      "finalNetWorth": 8406236,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2652003,
+      "foundAt": "2026-05-28T11:42:33.446Z",
+      "finalNetWorth": 8411522,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 6,
+      "evaluations": 2652008,
+      "foundAt": "2026-05-28T11:42:33.451Z",
+      "finalNetWorth": 8416807,
+      "additionalInvestments": 6
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2971504,
+      "foundAt": "2026-05-28T11:43:28.748Z",
+      "finalNetWorth": 8422093,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972031,
+      "foundAt": "2026-05-28T11:43:28.838Z",
+      "finalNetWorth": 8425120,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972036,
+      "foundAt": "2026-05-28T11:43:28.844Z",
+      "finalNetWorth": 8429276,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972041,
+      "foundAt": "2026-05-28T11:43:28.848Z",
+      "finalNetWorth": 8433432,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972046,
+      "foundAt": "2026-05-28T11:43:28.852Z",
+      "finalNetWorth": 8437588,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972051,
+      "foundAt": "2026-05-28T11:43:28.860Z",
+      "finalNetWorth": 8441744,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972056,
+      "foundAt": "2026-05-28T11:43:28.865Z",
+      "finalNetWorth": 8445900,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972062,
+      "foundAt": "2026-05-28T11:43:28.869Z",
+      "finalNetWorth": 8450056,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972067,
+      "foundAt": "2026-05-28T11:43:28.874Z",
+      "finalNetWorth": 8454213,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972072,
+      "foundAt": "2026-05-28T11:43:28.878Z",
+      "finalNetWorth": 8458369,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972078,
+      "foundAt": "2026-05-28T11:43:28.883Z",
+      "finalNetWorth": 8462525,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972083,
+      "foundAt": "2026-05-28T11:43:28.888Z",
+      "finalNetWorth": 8466681,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972088,
+      "foundAt": "2026-05-28T11:43:28.893Z",
+      "finalNetWorth": 8470837,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972093,
+      "foundAt": "2026-05-28T11:43:28.897Z",
+      "finalNetWorth": 8474993,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972098,
+      "foundAt": "2026-05-28T11:43:28.902Z",
+      "finalNetWorth": 8479149,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972104,
+      "foundAt": "2026-05-28T11:43:28.908Z",
+      "finalNetWorth": 8483306,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972109,
+      "foundAt": "2026-05-28T11:43:28.913Z",
+      "finalNetWorth": 8487462,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972114,
+      "foundAt": "2026-05-28T11:43:28.921Z",
+      "finalNetWorth": 8491618,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972119,
+      "foundAt": "2026-05-28T11:43:28.928Z",
+      "finalNetWorth": 8495774,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972124,
+      "foundAt": "2026-05-28T11:43:28.936Z",
+      "finalNetWorth": 8499930,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972129,
+      "foundAt": "2026-05-28T11:43:28.940Z",
+      "finalNetWorth": 8504086,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972134,
+      "foundAt": "2026-05-28T11:43:28.945Z",
+      "finalNetWorth": 8508242,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972139,
+      "foundAt": "2026-05-28T11:43:28.951Z",
+      "finalNetWorth": 8512399,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972144,
+      "foundAt": "2026-05-28T11:43:28.956Z",
+      "finalNetWorth": 8516555,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972714,
+      "foundAt": "2026-05-28T11:43:29.079Z",
+      "finalNetWorth": 8517962,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972719,
+      "foundAt": "2026-05-28T11:43:29.086Z",
+      "finalNetWorth": 8521028,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972724,
+      "foundAt": "2026-05-28T11:43:29.090Z",
+      "finalNetWorth": 8524093,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972729,
+      "foundAt": "2026-05-28T11:43:29.095Z",
+      "finalNetWorth": 8527158,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972730,
+      "foundAt": "2026-05-28T11:43:29.099Z",
+      "finalNetWorth": 8527158,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972734,
+      "foundAt": "2026-05-28T11:43:29.104Z",
+      "finalNetWorth": 8530223,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972739,
+      "foundAt": "2026-05-28T11:43:29.109Z",
+      "finalNetWorth": 8533289,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972744,
+      "foundAt": "2026-05-28T11:43:29.113Z",
+      "finalNetWorth": 8536354,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972749,
+      "foundAt": "2026-05-28T11:43:29.117Z",
+      "finalNetWorth": 8539419,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972754,
+      "foundAt": "2026-05-28T11:43:29.121Z",
+      "finalNetWorth": 8542485,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972759,
+      "foundAt": "2026-05-28T11:43:29.126Z",
+      "finalNetWorth": 8545550,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972764,
+      "foundAt": "2026-05-28T11:43:29.130Z",
+      "finalNetWorth": 8548615,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972769,
+      "foundAt": "2026-05-28T11:43:29.135Z",
+      "finalNetWorth": 8551681,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972774,
+      "foundAt": "2026-05-28T11:43:29.140Z",
+      "finalNetWorth": 8554746,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972779,
+      "foundAt": "2026-05-28T11:43:29.146Z",
+      "finalNetWorth": 8557811,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972784,
+      "foundAt": "2026-05-28T11:43:29.151Z",
+      "finalNetWorth": 8560876,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 7,
+      "evaluations": 2972789,
+      "foundAt": "2026-05-28T11:43:29.155Z",
+      "finalNetWorth": 8563942,
+      "additionalInvestments": 7
+    },
+    {
+      "kind": "new-best",
+      "depth": 8,
+      "evaluations": 3223501,
+      "foundAt": "2026-05-28T11:44:15.044Z",
+      "finalNetWorth": 8567007,
+      "additionalInvestments": 8
+    },
+    {
+      "kind": "new-best",
+      "depth": 8,
+      "evaluations": 3223506,
+      "foundAt": "2026-05-28T11:44:15.058Z",
+      "finalNetWorth": 8570072,
+      "additionalInvestments": 8
+    },
+    {
+      "kind": "new-best",
+      "depth": 8,
+      "evaluations": 3223511,
+      "foundAt": "2026-05-28T11:44:15.066Z",
+      "finalNetWorth": 8573138,
+      "additionalInvestments": 8
+    },
+    {
+      "kind": "new-best",
+      "depth": 8,
+      "evaluations": 3224046,
+      "foundAt": "2026-05-28T11:44:15.201Z",
+      "finalNetWorth": 8573995,
+      "additionalInvestments": 8
+    },
+    {
+      "kind": "new-best",
+      "depth": 8,
+      "evaluations": 3224051,
+      "foundAt": "2026-05-28T11:44:15.208Z",
+      "finalNetWorth": 8576005,
+      "additionalInvestments": 8
+    },
+    {
+      "kind": "new-best",
+      "depth": 8,
+      "evaluations": 3224056,
+      "foundAt": "2026-05-28T11:44:15.215Z",
+      "finalNetWorth": 8578016,
+      "additionalInvestments": 8
+    },
+    {
+      "kind": "new-best",
+      "depth": 8,
+      "evaluations": 3224061,
+      "foundAt": "2026-05-28T11:44:15.220Z",
+      "finalNetWorth": 8580026,
+      "additionalInvestments": 8
+    },
+    {
+      "kind": "new-best",
+      "depth": 8,
+      "evaluations": 3224066,
+      "foundAt": "2026-05-28T11:44:15.225Z",
+      "finalNetWorth": 8582037,
+      "additionalInvestments": 8
+    },
+    {
+      "kind": "new-best",
+      "depth": 8,
+      "evaluations": 3224071,
+      "foundAt": "2026-05-28T11:44:15.231Z",
+      "finalNetWorth": 8584047,
+      "additionalInvestments": 8
+    },
+    {
+      "kind": "new-best",
+      "depth": 8,
+      "evaluations": 3224077,
+      "foundAt": "2026-05-28T11:44:15.235Z",
+      "finalNetWorth": 8586058,
+      "additionalInvestments": 8
+    },
+    {
+      "kind": "new-best",
+      "depth": 8,
+      "evaluations": 3224082,
+      "foundAt": "2026-05-28T11:44:15.240Z",
+      "finalNetWorth": 8588069,
+      "additionalInvestments": 8
+    },
+    {
+      "kind": "new-best",
+      "depth": 8,
+      "evaluations": 3224087,
+      "foundAt": "2026-05-28T11:44:15.249Z",
+      "finalNetWorth": 8590079,
+      "additionalInvestments": 8
+    },
+    {
+      "kind": "new-best",
+      "depth": 8,
+      "evaluations": 3224092,
+      "foundAt": "2026-05-28T11:44:15.258Z",
+      "finalNetWorth": 8592090,
+      "additionalInvestments": 8
+    },
+    {
+      "kind": "new-best",
+      "depth": 8,
+      "evaluations": 3224098,
+      "foundAt": "2026-05-28T11:44:15.268Z",
+      "finalNetWorth": 8594100,
+      "additionalInvestments": 8
+    },
+    {
+      "kind": "new-best",
+      "depth": 8,
+      "evaluations": 3224103,
+      "foundAt": "2026-05-28T11:44:15.273Z",
+      "finalNetWorth": 8596111,
+      "additionalInvestments": 8
+    },
+    {
+      "kind": "new-best",
+      "depth": 8,
+      "evaluations": 3224108,
+      "foundAt": "2026-05-28T11:44:15.278Z",
+      "finalNetWorth": 8598121,
+      "additionalInvestments": 8
+    },
+    {
+      "kind": "new-best",
+      "depth": 8,
+      "evaluations": 3224113,
+      "foundAt": "2026-05-28T11:44:15.284Z",
+      "finalNetWorth": 8600132,
+      "additionalInvestments": 8
+    },
+    {
+      "kind": "new-best",
+      "depth": 8,
+      "evaluations": 3224118,
+      "foundAt": "2026-05-28T11:44:15.289Z",
+      "finalNetWorth": 8602142,
+      "additionalInvestments": 8
+    },
+    {
+      "kind": "new-best",
+      "depth": 8,
+      "evaluations": 3224123,
+      "foundAt": "2026-05-28T11:44:15.297Z",
+      "finalNetWorth": 8604153,
+      "additionalInvestments": 8
+    },
+    {
+      "kind": "new-best",
+      "depth": 8,
+      "evaluations": 3224128,
+      "foundAt": "2026-05-28T11:44:15.305Z",
+      "finalNetWorth": 8606164,
+      "additionalInvestments": 8
+    },
+    {
+      "kind": "new-best",
+      "depth": 8,
+      "evaluations": 3224134,
+      "foundAt": "2026-05-28T11:44:15.313Z",
+      "finalNetWorth": 8608174,
+      "additionalInvestments": 8
+    },
+    {
+      "kind": "new-best",
+      "depth": 8,
+      "evaluations": 3224139,
+      "foundAt": "2026-05-28T11:44:15.321Z",
+      "finalNetWorth": 8610185,
+      "additionalInvestments": 8
+    },
+    {
+      "kind": "new-best",
+      "depth": 8,
+      "evaluations": 3224144,
+      "foundAt": "2026-05-28T11:44:15.327Z",
+      "finalNetWorth": 8612195,
+      "additionalInvestments": 8
+    },
+    {
+      "kind": "new-best",
+      "depth": 8,
+      "evaluations": 3224149,
+      "foundAt": "2026-05-28T11:44:15.332Z",
+      "finalNetWorth": 8614206,
+      "additionalInvestments": 8
+    },
+    {
+      "kind": "new-best",
+      "depth": 8,
+      "evaluations": 3224154,
+      "foundAt": "2026-05-28T11:44:15.336Z",
+      "finalNetWorth": 8616216,
+      "additionalInvestments": 8
+    },
+    {
+      "kind": "new-best",
+      "depth": 8,
+      "evaluations": 3224159,
+      "foundAt": "2026-05-28T11:44:15.340Z",
+      "finalNetWorth": 8618227,
+      "additionalInvestments": 8
+    },
+    {
+      "kind": "new-best",
+      "depth": 8,
+      "evaluations": 3224164,
+      "foundAt": "2026-05-28T11:44:15.343Z",
+      "finalNetWorth": 8620238,
+      "additionalInvestments": 8
+    },
+    {
+      "kind": "new-best",
+      "depth": 9,
+      "evaluations": 3391501,
+      "foundAt": "2026-05-28T11:44:45.619Z",
+      "finalNetWorth": 8622248,
+      "additionalInvestments": 9
+    },
+    {
+      "kind": "new-best",
+      "depth": 9,
+      "evaluations": 3391506,
+      "foundAt": "2026-05-28T11:44:45.628Z",
+      "finalNetWorth": 8624259,
+      "additionalInvestments": 9
+    },
+    {
+      "kind": "new-best",
+      "depth": 9,
+      "evaluations": 3391511,
+      "foundAt": "2026-05-28T11:44:45.632Z",
+      "finalNetWorth": 8626269,
+      "additionalInvestments": 9
+    },
+    {
+      "kind": "new-best",
+      "depth": 9,
+      "evaluations": 3392056,
+      "foundAt": "2026-05-28T11:44:45.757Z",
+      "finalNetWorth": 8627164,
+      "additionalInvestments": 9
+    },
+    {
+      "kind": "new-best",
+      "depth": 9,
+      "evaluations": 3392061,
+      "foundAt": "2026-05-28T11:44:45.762Z",
+      "finalNetWorth": 8628154,
+      "additionalInvestments": 9
+    },
+    {
+      "kind": "new-best",
+      "depth": 9,
+      "evaluations": 3392066,
+      "foundAt": "2026-05-28T11:44:45.767Z",
+      "finalNetWorth": 8629143,
+      "additionalInvestments": 9
+    },
+    {
+      "kind": "new-best",
+      "depth": 9,
+      "evaluations": 3392071,
+      "foundAt": "2026-05-28T11:44:45.772Z",
+      "finalNetWorth": 8630133,
+      "additionalInvestments": 9
+    },
+    {
+      "kind": "new-best",
+      "depth": 9,
+      "evaluations": 3392076,
+      "foundAt": "2026-05-28T11:44:45.776Z",
+      "finalNetWorth": 8631123,
+      "additionalInvestments": 9
+    },
+    {
+      "kind": "new-best",
+      "depth": 9,
+      "evaluations": 3392082,
+      "foundAt": "2026-05-28T11:44:45.781Z",
+      "finalNetWorth": 8632112,
+      "additionalInvestments": 9
+    },
+    {
+      "kind": "new-best",
+      "depth": 9,
+      "evaluations": 3392087,
+      "foundAt": "2026-05-28T11:44:45.787Z",
+      "finalNetWorth": 8633102,
+      "additionalInvestments": 9
+    },
+    {
+      "kind": "new-best",
+      "depth": 9,
+      "evaluations": 3392092,
+      "foundAt": "2026-05-28T11:44:45.792Z",
+      "finalNetWorth": 8634091,
+      "additionalInvestments": 9
+    },
+    {
+      "kind": "new-best",
+      "depth": 9,
+      "evaluations": 3392097,
+      "foundAt": "2026-05-28T11:44:45.796Z",
+      "finalNetWorth": 8635081,
+      "additionalInvestments": 9
+    },
+    {
+      "kind": "new-best",
+      "depth": 9,
+      "evaluations": 3392103,
+      "foundAt": "2026-05-28T11:44:45.801Z",
+      "finalNetWorth": 8636070,
+      "additionalInvestments": 9
+    },
+    {
+      "kind": "new-best",
+      "depth": 9,
+      "evaluations": 3392108,
+      "foundAt": "2026-05-28T11:44:45.806Z",
+      "finalNetWorth": 8637060,
+      "additionalInvestments": 9
+    },
+    {
+      "kind": "new-best",
+      "depth": 9,
+      "evaluations": 3392113,
+      "foundAt": "2026-05-28T11:44:45.811Z",
+      "finalNetWorth": 8638049,
+      "additionalInvestments": 9
+    },
+    {
+      "kind": "new-best",
+      "depth": 9,
+      "evaluations": 3392118,
+      "foundAt": "2026-05-28T11:44:45.816Z",
+      "finalNetWorth": 8639039,
+      "additionalInvestments": 9
+    },
+    {
+      "kind": "new-best",
+      "depth": 9,
+      "evaluations": 3392123,
+      "foundAt": "2026-05-28T11:44:45.824Z",
+      "finalNetWorth": 8640029,
+      "additionalInvestments": 9
+    },
+    {
+      "kind": "new-best",
+      "depth": 9,
+      "evaluations": 3392128,
+      "foundAt": "2026-05-28T11:44:45.829Z",
+      "finalNetWorth": 8641018,
+      "additionalInvestments": 9
+    },
+    {
+      "kind": "new-best",
+      "depth": 9,
+      "evaluations": 3392133,
+      "foundAt": "2026-05-28T11:44:45.833Z",
+      "finalNetWorth": 8642008,
+      "additionalInvestments": 9
+    },
+    {
+      "kind": "new-best",
+      "depth": 9,
+      "evaluations": 3392139,
+      "foundAt": "2026-05-28T11:44:45.838Z",
+      "finalNetWorth": 8642997,
+      "additionalInvestments": 9
+    },
+    {
+      "kind": "new-best",
+      "depth": 9,
+      "evaluations": 3392144,
+      "foundAt": "2026-05-28T11:44:45.842Z",
+      "finalNetWorth": 8643987,
+      "additionalInvestments": 9
+    },
+    {
+      "kind": "new-best",
+      "depth": 9,
+      "evaluations": 3392149,
+      "foundAt": "2026-05-28T11:44:45.847Z",
+      "finalNetWorth": 8644976,
+      "additionalInvestments": 9
+    },
+    {
+      "kind": "new-best",
+      "depth": 9,
+      "evaluations": 3392154,
+      "foundAt": "2026-05-28T11:44:45.851Z",
+      "finalNetWorth": 8645966,
+      "additionalInvestments": 9
+    },
+    {
+      "kind": "new-best",
+      "depth": 9,
+      "evaluations": 3392159,
+      "foundAt": "2026-05-28T11:44:45.855Z",
+      "finalNetWorth": 8646955,
+      "additionalInvestments": 9
+    },
+    {
+      "kind": "new-best",
+      "depth": 9,
+      "evaluations": 3392164,
+      "foundAt": "2026-05-28T11:44:45.860Z",
+      "finalNetWorth": 8647945,
+      "additionalInvestments": 9
+    },
+    {
+      "kind": "new-best",
+      "depth": 9,
+      "evaluations": 3392169,
+      "foundAt": "2026-05-28T11:44:45.864Z",
+      "finalNetWorth": 8648934,
+      "additionalInvestments": 9
+    },
+    {
+      "kind": "new-best",
+      "depth": 9,
+      "evaluations": 3392174,
+      "foundAt": "2026-05-28T11:44:45.869Z",
+      "finalNetWorth": 8649924,
+      "additionalInvestments": 9
+    },
+    {
+      "kind": "new-best",
+      "depth": 10,
+      "evaluations": 3514876,
+      "foundAt": "2026-05-28T11:45:10.079Z",
+      "finalNetWorth": 8650914,
+      "additionalInvestments": 10
+    },
+    {
+      "kind": "new-best",
+      "depth": 10,
+      "evaluations": 3514881,
+      "foundAt": "2026-05-28T11:45:10.085Z",
+      "finalNetWorth": 8651903,
+      "additionalInvestments": 10
+    },
+    {
+      "kind": "new-best",
+      "depth": 10,
+      "evaluations": 3514886,
+      "foundAt": "2026-05-28T11:45:10.089Z",
+      "finalNetWorth": 8652893,
+      "additionalInvestments": 10
+    }
+  ],
+  "scenarioUrl": "http://localhost:8765/scenario_modeller.html?v=4&scenario=eyJnbG9iYWxzIjp7Imdyb3NzSW5jb21lIjoyMDAwMDAsInBhcnRuZXJHcm9zc0luY29tZSI6NjcwMDAsImluY29tZUdyb3d0aFBjdCI6Mi41LCJtYXJnaW5hbFRheFJhdGUiOjAuMzksImN1cnJlbnRZZWFyU3VycGx1c0ZyYWN0aW9uIjowLjU4MzMzMzMzMzMzMzMzMzQsImNhdGVnb3J5UHJpY2VCYW5kRHJpZnRQY3QiOjQsImxvd2VyQmFuZERyaWZ0UGN0Ijo0LjUsInVwcGVyQmFuZERyaWZ0UGN0Ijo1LjUsImNhc2hSZXR1cm5QY3QiOjQsInN0b2NrR3Jvd3RoUGN0Ijo4LCJzdG9ja0RpdmlkZW5kUGN0IjoyLjUsInN0b2NrRGl2aWRlbmRUYXhSYXRlUGN0IjoxNywicHJvcGVydHlHcm93dGhQY3QiOjQsInByb3BlcnR5WWllbGRQY3QiOjQsInJlbnRHcm93dGhQY3QiOjMsImludGVyZXN0UmF0ZVBjdCI6Ni4zLCJub25JbnRlcmVzdENvc3RQY3QiOjEuMiwicHJpbmNpcGFsUmVwYXlQY3QiOjEuNSwic3RyZXNzQnVmZmVyUGN0IjozLCJyZW50U2hhZGluZ1BjdCI6ODAsImxpdmluZ0V4cGVuc2VzQW5udWFsIjo2MDAwMCwibWluQ2FzaEJ1ZmZlciI6NzY5NDIsImR0aUNhcCI6NiwiZGVwb3NpdFBjdCI6MjAsInN0YW1wRHV0eVBjdCI6NS41LCJwcG9yIjp7Imdyb3d0aFBjdCI6NCwicHJpbmNpcGFsUmVwYXlQY3QiOjMsImxvYW5SYXRlUGN0Ijo1Ljk1LCJyZXBheW1lbnRNb250aGx5Ijo0NDk5LCJyZW1haW5pbmdUZXJtWWVhcnMiOjI4LCJ1c2VDYXNoQXNPZmZzZXQiOnRydWV9fSwiaW52ZXN0bWVudHMiOlt7ImlkIjoib3B0LTEiLCJ0eXBlIjoicHJvcGVydHkiLCJzdWJ0eXBlIjoibmV3IiwiZGVwb3NpdFNvdXJjZSI6Im1peGVkIiwiY2FzaEZ1bmRpbmdQY3QiOjUwLCJuYW1lIjoiT1BUIDIwMjYgQCA4NTAsMDAwIiwieWVhciI6MjAyNiwicHJpY2UiOjg1MDAwMCwiZGVwb3NpdFBjdCI6MjAsInlpZWxkUGN0Ijo0LCJncm93dGhNb2RlIjoiYXV0byIsImludGVyZXN0UGN0Ijo2LjN9LHsiaWQiOiJvcHQtMiIsInR5cGUiOiJzdG9jayIsIm5hbWUiOiJPUFQgc3RvY2sgMjAzMCBAIDUwMCwwMDAiLCJ5ZWFyIjoyMDMwLCJhbW91bnQiOjUwMDAwMCwiZGVwb3NpdFNvdXJjZSI6Im1peGVkIiwiY2FzaEZ1bmRpbmdQY3QiOjI1fSx7ImlkIjoib3B0LTMiLCJ0eXBlIjoic3RvY2siLCJuYW1lIjoiT1BUIHN0b2NrIDIwMzUgQCAzNzAsMDAwIiwieWVhciI6MjAzNSwiYW1vdW50IjozNzAwMDAsImRlcG9zaXRTb3VyY2UiOiJtaXhlZCIsImNhc2hGdW5kaW5nUGN0IjoyNX0seyJpZCI6Im9wdC00IiwidHlwZSI6InN0b2NrIiwibmFtZSI6Ik9QVCBzdG9jayAyMDM5IEAgNTAwLDAwMCIsInllYXIiOjIwMzksImFtb3VudCI6NTAwMDAwLCJkZXBvc2l0U291cmNlIjoibWl4ZWQiLCJjYXNoRnVuZGluZ1BjdCI6NTB9LHsiaWQiOiJvcHQtNSIsInR5cGUiOiJzdG9jayIsIm5hbWUiOiJPUFQgc3RvY2sgMjA0MiBAIDQzMCwwMDAiLCJ5ZWFyIjoyMDQyLCJhbW91bnQiOjQzMDAwMCwiZGVwb3NpdFNvdXJjZSI6Im1peGVkIiwiY2FzaEZ1bmRpbmdQY3QiOjc1fSx7ImlkIjoib3B0LTYiLCJ0eXBlIjoic3RvY2siLCJuYW1lIjoiT1BUIHN0b2NrIDIwNDQgQCA0NzAsMDAwIiwieWVhciI6MjA0NCwiYW1vdW50Ijo0NzAwMDAsImRlcG9zaXRTb3VyY2UiOiJtaXhlZCIsImNhc2hGdW5kaW5nUGN0Ijo1MH0seyJpZCI6Im9wdC03IiwidHlwZSI6InN0b2NrIiwibmFtZSI6Ik9QVCBzdG9jayAyMDQ2IEAgNDgwLDAwMCIsInllYXIiOjIwNDYsImFtb3VudCI6NDgwMDAwLCJkZXBvc2l0U291cmNlIjoibWl4ZWQiLCJjYXNoRnVuZGluZ1BjdCI6NzV9LHsiaWQiOiJvcHQtOCIsInR5cGUiOiJzdG9jayIsIm5hbWUiOiJPUFQgc3RvY2sgMjA0NyBAIDI4MCwwMDAiLCJ5ZWFyIjoyMDQ3LCJhbW91bnQiOjI4MDAwMCwiZGVwb3NpdFNvdXJjZSI6Im1peGVkIiwiY2FzaEZ1bmRpbmdQY3QiOjc1fSx7ImlkIjoib3B0LTkiLCJ0eXBlIjoic3RvY2siLCJuYW1lIjoiT1BUIHN0b2NrIDIwNDggQCAzMDAsMDAwIiwieWVhciI6MjA0OCwiYW1vdW50IjozMDAwMDAsImRlcG9zaXRTb3VyY2UiOiJtaXhlZCIsImNhc2hGdW5kaW5nUGN0Ijo3NX0seyJpZCI6Im9wdC0xMCIsInR5cGUiOiJzdG9jayIsIm5hbWUiOiJPUFQgc3RvY2sgMjA0OCBAIDMwLDAwMCIsInllYXIiOjIwNDgsImFtb3VudCI6MzAwMDAsImRlcG9zaXRTb3VyY2UiOiJlcXVpdHkiLCJjYXNoRnVuZGluZ1BjdCI6MH1dLCJ0YWIiOiJib3Jyb3cifQ"
+}

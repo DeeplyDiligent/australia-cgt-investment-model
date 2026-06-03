@@ -1,0 +1,11 @@
+{
+  "name": "scenario-modeller",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node tests.js",
+    "serve": "python -m http.server 8765",
+    "optimize": "node optimize_net_worth.js"
+  }
+}

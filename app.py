@@ -25,12 +25,58 @@ class StrategyResult:
     explanation: str
 
 
+@dataclass
+class PropertyLot:
+    purchase_year: int
+    purchase_price: float
+    loan_balance: float
+    property_value: float
+    annual_rent: float
+    cost_base: float
+    carried_loss: float = 0.0
+
+
+@dataclass
+class PortfolioResult:
+    name: str
+    ending_wealth: float
+    asset_value: float
+    debt: float
+    cash: float
+    exit_tax: float
+    purchases: int
+    worst_cashflow_year: float
+    final_year_cashflow: float
+    explanation: str
+    yearly_rows: List[Dict[str, float | int | str]]
+
+
 def money(value: float) -> str:
     return f"${value:,.0f}"
 
 
 def pct(value: float) -> str:
     return f"{value * 100:.1f}%"
+
+
+def estimate_after_tax_income(pre_tax_income: float) -> float:
+    brackets = [
+        (18_200, 0.00),
+        (45_000, 0.16),
+        (135_000, 0.30),
+        (190_000, 0.37),
+        (float("inf"), 0.45),
+    ]
+    tax = 0.0
+    lower = 0.0
+    for upper, rate in brackets:
+        taxable_slice = max(min(pre_tax_income, upper) - lower, 0.0)
+        tax += taxable_slice * rate
+        lower = upper
+        if pre_tax_income <= upper:
+            break
+    medicare = pre_tax_income * 0.02
+    return pre_tax_income - tax - medicare
 
 
 def render_wrapped_table(dataframe: pd.DataFrame) -> None:
@@ -82,6 +128,247 @@ def proposed_cgt_tax(real_gain: float, marginal_tax_rate: float) -> float:
 def proposed_real_gain(cost_base: float, exit_value: float, years: float, inflation_rate: float) -> float:
     indexed_cost = cost_base * ((1 + inflation_rate) ** max(years, 0.0))
     return max(exit_value - indexed_cost, 0.0)
+
+
+def property_year_cashflow(
+    lot: PropertyLot,
+    *,
+    year_index: int,
+    eligible_new_build: bool,
+    interest_rate: float,
+    principal_repayment_pct: float,
+    non_interest_cost_pct: float,
+    marginal_tax_rate: float,
+) -> tuple[float, float]:
+    interest_cost = lot.loan_balance * interest_rate
+    principal_payment = lot.loan_balance * principal_repayment_pct
+    non_interest_costs = lot.property_value * non_interest_cost_pct
+    taxable_income = lot.annual_rent - interest_cost - non_interest_costs
+    years_since_purchase = year_index - lot.purchase_year
+    can_offset_salary = eligible_new_build or years_since_purchase == 0
+
+    if can_offset_salary:
+        tax_effect = -taxable_income * marginal_tax_rate
+    elif taxable_income >= 0:
+        taxable_after_losses = max(taxable_income - lot.carried_loss, 0.0)
+        lot.carried_loss = max(lot.carried_loss - taxable_income, 0.0)
+        tax_effect = -taxable_after_losses * marginal_tax_rate
+    else:
+        lot.carried_loss += abs(taxable_income)
+        tax_effect = 0.0
+
+    lot.loan_balance = max(lot.loan_balance - principal_payment, 0.0)
+    cashflow = lot.annual_rent - interest_cost - principal_payment - non_interest_costs + tax_effect
+    taxable_cashflow = lot.annual_rent - interest_cost - non_interest_costs + tax_effect
+    return cashflow, taxable_cashflow
+
+
+def model_property_portfolio(
+    *,
+    name: str,
+    pre_tax_income: float,
+    living_costs: float,
+    starting_liquid_assets: float,
+    property_price: float,
+    deposit_pct: float,
+    purchase_cost_pct: float,
+    selling_cost_pct: float,
+    interest_rate: float,
+    principal_repayment_pct: float,
+    gross_yield_pct: float,
+    rental_growth_pct: float,
+    capital_growth_pct: float,
+    non_interest_cost_pct: float,
+    marginal_tax_rate: float,
+    holding_years: int,
+    inflation_rate: float,
+    eligible_new_build: bool,
+    max_debt_to_income: float,
+    serviceability_buffer_rate: float,
+    minimum_cash_buffer: float,
+    max_properties: int,
+) -> PortfolioResult:
+    after_tax_income = estimate_after_tax_income(pre_tax_income)
+    annual_surplus = after_tax_income - living_costs
+    cash = starting_liquid_assets
+    lots: List[PropertyLot] = []
+    yearly_rows: List[Dict[str, float | int | str]] = []
+    purchase_cash_needed = property_price * (deposit_pct + purchase_cost_pct)
+    worst_cashflow_year = 0.0
+
+    for year in range(holding_years):
+        portfolio_cashflow = 0.0
+        rent_received = 0.0
+        for lot in lots:
+            cashflow, _ = property_year_cashflow(
+                lot,
+                year_index=year,
+                eligible_new_build=eligible_new_build,
+                interest_rate=interest_rate,
+                principal_repayment_pct=principal_repayment_pct,
+                non_interest_cost_pct=non_interest_cost_pct,
+                marginal_tax_rate=marginal_tax_rate,
+            )
+            portfolio_cashflow += cashflow
+            rent_received += lot.annual_rent
+            lot.annual_rent *= 1 + rental_growth_pct
+            lot.property_value *= 1 + capital_growth_pct
+
+        cash += annual_surplus + portfolio_cashflow
+        total_debt = sum(lot.loan_balance for lot in lots)
+        total_value = sum(lot.property_value for lot in lots)
+        usable_equity = max(total_value * (1 - deposit_pct) - total_debt, 0.0)
+        debt_limit = pre_tax_income * max_debt_to_income
+        loan_needed = property_price * (1 - deposit_pct)
+        stressed_interest_cost = (total_debt + loan_needed) * (interest_rate + serviceability_buffer_rate)
+        rent_haircut = (rent_received + property_price * gross_yield_pct) * 0.80
+        serviceability_income = pre_tax_income + rent_haircut
+        can_service = stressed_interest_cost <= serviceability_income * 0.35
+        has_debt_room = total_debt + loan_needed <= debt_limit
+        available_deposit_funding = cash + usable_equity
+
+        if (
+            len(lots) < max_properties
+            and has_debt_room
+            and can_service
+            and available_deposit_funding >= purchase_cash_needed + minimum_cash_buffer
+        ):
+            cash_used = min(cash - minimum_cash_buffer, purchase_cash_needed)
+            cash -= max(cash_used, 0.0)
+            lots.append(
+                PropertyLot(
+                    purchase_year=year,
+                    purchase_price=property_price,
+                    loan_balance=loan_needed,
+                    property_value=property_price,
+                    annual_rent=property_price * gross_yield_pct,
+                    cost_base=property_price * (1 + purchase_cost_pct),
+                )
+            )
+
+        worst_cashflow_year = min(worst_cashflow_year, portfolio_cashflow)
+        yearly_rows.append(
+            {
+                "Year": year + 1,
+                "Properties": len(lots),
+                "Portfolio cashflow": portfolio_cashflow,
+                "Cash / offset": cash,
+                "Property value": sum(lot.property_value for lot in lots),
+                "Debt": sum(lot.loan_balance for lot in lots),
+                "Usable equity estimate": usable_equity,
+            }
+        )
+
+    exit_tax = 0.0
+    final_value = 0.0
+    final_debt = 0.0
+    for lot in lots:
+        exit_value = lot.property_value * (1 - selling_cost_pct)
+        years_held = holding_years - lot.purchase_year
+        adjusted_exit_value = max(exit_value - lot.carried_loss, lot.cost_base)
+        exit_tax += sale_tax_for_asset(
+            cost_base=lot.cost_base,
+            exit_value=adjusted_exit_value,
+            annual_growth=capital_growth_pct,
+            holding_years=years_held,
+            inflation_rate=inflation_rate,
+            marginal_tax_rate=marginal_tax_rate,
+            acquisition_timing="Buy after 1 July 2027",
+            eligible_new_build=eligible_new_build,
+        )
+        final_value += exit_value
+        final_debt += lot.loan_balance
+
+    ending_wealth = final_value - final_debt - exit_tax + cash
+    final_year_cashflow = yearly_rows[-1]["Portfolio cashflow"] if yearly_rows else 0.0
+    explanation = (
+        "Keeps salary-offset loss relief, so serviceability usually supports more purchases before cashflow binds."
+        if eligible_new_build
+        else "Losses are quarantined after each purchase year, so cashflow and debt capacity usually cap the portfolio earlier."
+    )
+    return PortfolioResult(
+        name=name,
+        ending_wealth=ending_wealth,
+        asset_value=final_value,
+        debt=final_debt,
+        cash=cash,
+        exit_tax=exit_tax,
+        purchases=len(lots),
+        worst_cashflow_year=worst_cashflow_year,
+        final_year_cashflow=float(final_year_cashflow),
+        explanation=explanation,
+        yearly_rows=yearly_rows,
+    )
+
+
+def model_shares_portfolio(
+    *,
+    pre_tax_income: float,
+    living_costs: float,
+    starting_liquid_assets: float,
+    brokerage_pct: float,
+    dividend_yield_pct: float,
+    franked_fraction: float,
+    company_tax_rate: float,
+    capital_growth_pct: float,
+    management_fee_pct: float,
+    marginal_tax_rate: float,
+    holding_years: int,
+    inflation_rate: float,
+) -> PortfolioResult:
+    after_tax_income = estimate_after_tax_income(pre_tax_income)
+    annual_surplus = after_tax_income - living_costs
+    portfolio_value = starting_liquid_assets * (1 - brokerage_pct)
+    cost_base = starting_liquid_assets
+    yearly_rows: List[Dict[str, float | int | str]] = []
+
+    for year in range(holding_years):
+        gross_dividend = portfolio_value * dividend_yield_pct
+        franked_dividend = gross_dividend * franked_fraction
+        franking_credit = franked_dividend * (company_tax_rate / (1 - company_tax_rate))
+        tax_on_dividends = (gross_dividend + franking_credit) * marginal_tax_rate
+        after_tax_dividend = gross_dividend - (tax_on_dividends - franking_credit)
+        management_fee = portfolio_value * management_fee_pct
+        annual_investment = max(annual_surplus, 0.0) + after_tax_dividend
+        portfolio_value = portfolio_value * (1 + capital_growth_pct) - management_fee + annual_investment
+        cost_base += annual_investment
+        yearly_rows.append(
+            {
+                "Year": year + 1,
+                "Properties": 0,
+                "Portfolio cashflow": after_tax_dividend,
+                "Cash / offset": 0.0,
+                "Property value": 0.0,
+                "Debt": 0.0,
+                "Usable equity estimate": 0.0,
+                "Share portfolio": portfolio_value,
+            }
+        )
+
+    sale_proceeds = portfolio_value * (1 - brokerage_pct)
+    exit_tax = sale_tax_for_asset(
+        cost_base=cost_base,
+        exit_value=sale_proceeds,
+        annual_growth=capital_growth_pct,
+        holding_years=holding_years,
+        inflation_rate=inflation_rate,
+        marginal_tax_rate=marginal_tax_rate,
+        acquisition_timing="Buy after 1 July 2027",
+        eligible_new_build=False,
+    )
+    return PortfolioResult(
+        name="Shares / ETF accumulation",
+        ending_wealth=sale_proceeds - exit_tax,
+        asset_value=sale_proceeds,
+        debt=0.0,
+        cash=0.0,
+        exit_tax=exit_tax,
+        purchases=0,
+        worst_cashflow_year=0.0,
+        final_year_cashflow=float(yearly_rows[-1]["Portfolio cashflow"]),
+        explanation="Invests the annual household surplus without borrowing, so it compounds more steadily but without property leverage.",
+        yearly_rows=yearly_rows,
+    )
 
 
 def sale_tax_for_asset(
@@ -382,8 +669,8 @@ st.caption(
     "It is a research tool, not personal financial or tax advice."
 )
 
-tab_summary, tab_report, tab_model, tab_areas = st.tabs(
-    ["Summary", "New report", "Property vs shares model", "Winners and losers map"]
+tab_summary, tab_report, tab_portfolio, tab_model, tab_areas = st.tabs(
+    ["Summary", "New report", "Realistic portfolio path", "Property vs shares model", "Winners and losers map"]
 )
 
 with tab_report:
@@ -519,7 +806,7 @@ with tab_model:
     chart_df = pd.DataFrame(
         [{"Strategy": result.name, "After-tax ending wealth": result.ending_wealth} for result in results]
     )
-    st.bar_chart(chart_df.set_index("Strategy"), use_container_width=True)
+    st.bar_chart(chart_df.set_index("Strategy"), width="stretch")
 
     st.markdown("**How the proposal changes the decision**")
     for result in results:
@@ -556,6 +843,144 @@ with tab_model:
     outlook_df = pd.DataFrame(FUTURE_OUTLOOK)
     outlook_df.columns = ["Asset", "Future view", "Core reason", "Who it suits"]
     render_wrapped_table(outlook_df)
+
+with tab_portfolio:
+    st.subheader("Realistic accumulation path on a $260k household income")
+    st.info(
+        "This view models repeat purchases rather than one property forever. A new property is only added when cash, usable equity, debt-to-income and stressed-interest serviceability all pass."
+    )
+
+    household_left, household_right = st.columns(2)
+    with household_left:
+        st.markdown("**Household and borrowing capacity**")
+        household_income = st.number_input("Pre-tax household income", min_value=80_000, value=260_000, step=10_000)
+        living_costs = st.number_input("Annual living costs after tax", min_value=40_000, value=115_000, step=5_000)
+        starting_liquid_assets = st.number_input("Starting investable cash / shares", min_value=0, value=100_000, step=10_000)
+        portfolio_years = st.slider("Portfolio projection period", 5, 30, 20, key="portfolio_years")
+        max_debt_to_income = st.slider("Maximum debt-to-income multiple", 2.0, 8.0, 5.0, 0.25)
+        serviceability_buffer_rate = st.slider("Serviceability interest buffer", 0.0, 4.0, 3.0, 0.25, format="%.2f%%") / 100
+        minimum_cash_buffer = st.number_input("Minimum cash buffer", min_value=0, value=40_000, step=5_000)
+
+    with household_right:
+        st.markdown("**Repeat-purchase property settings**")
+        portfolio_property_price = st.number_input("Target property price", min_value=300_000, value=850_000, step=25_000)
+        portfolio_deposit_pct = st.slider("Deposit per property", 10.0, 40.0, 20.0, 1.0, format="%.2f%%") / 100
+        principal_repayment_pct = st.slider("Annual principal repayment", 0.0, 4.0, 1.5, 0.25, format="%.2f%%") / 100
+        established_max_properties = st.slider("Established-property max purchase appetite", 1, 8, 3)
+        new_build_max_properties = st.slider("New-build max purchase appetite", 1, 10, 5)
+        portfolio_established_yield = st.slider("Established portfolio gross yield", 2.0, 8.0, 3.7, 0.25, format="%.2f%%") / 100
+        portfolio_new_build_yield = st.slider("New-build portfolio gross yield", 2.0, 8.0, 4.4, 0.25, format="%.2f%%") / 100
+
+    established_path = model_property_portfolio(
+        name="Established residential portfolio",
+        pre_tax_income=household_income,
+        living_costs=living_costs,
+        starting_liquid_assets=starting_liquid_assets,
+        property_price=portfolio_property_price,
+        deposit_pct=portfolio_deposit_pct,
+        purchase_cost_pct=purchase_cost_pct,
+        selling_cost_pct=selling_cost_pct,
+        interest_rate=interest_rate,
+        principal_repayment_pct=principal_repayment_pct,
+        gross_yield_pct=portfolio_established_yield,
+        rental_growth_pct=established_rent_growth,
+        capital_growth_pct=established_cap_growth,
+        non_interest_cost_pct=non_interest_cost_pct,
+        marginal_tax_rate=marginal_tax_rate,
+        holding_years=portfolio_years,
+        inflation_rate=inflation_rate,
+        eligible_new_build=False,
+        max_debt_to_income=max_debt_to_income,
+        serviceability_buffer_rate=serviceability_buffer_rate,
+        minimum_cash_buffer=minimum_cash_buffer,
+        max_properties=established_max_properties,
+    )
+    new_build_path = model_property_portfolio(
+        name="New-build residential portfolio",
+        pre_tax_income=household_income,
+        living_costs=living_costs,
+        starting_liquid_assets=starting_liquid_assets,
+        property_price=portfolio_property_price,
+        deposit_pct=portfolio_deposit_pct,
+        purchase_cost_pct=purchase_cost_pct,
+        selling_cost_pct=selling_cost_pct,
+        interest_rate=interest_rate,
+        principal_repayment_pct=principal_repayment_pct,
+        gross_yield_pct=portfolio_new_build_yield,
+        rental_growth_pct=new_build_rent_growth,
+        capital_growth_pct=new_build_cap_growth,
+        non_interest_cost_pct=non_interest_cost_pct,
+        marginal_tax_rate=marginal_tax_rate,
+        holding_years=portfolio_years,
+        inflation_rate=inflation_rate,
+        eligible_new_build=True,
+        max_debt_to_income=max_debt_to_income,
+        serviceability_buffer_rate=serviceability_buffer_rate,
+        minimum_cash_buffer=minimum_cash_buffer,
+        max_properties=new_build_max_properties,
+    )
+    shares_path = model_shares_portfolio(
+        pre_tax_income=household_income,
+        living_costs=living_costs,
+        starting_liquid_assets=starting_liquid_assets,
+        brokerage_pct=brokerage_pct,
+        dividend_yield_pct=dividend_yield_pct,
+        franked_fraction=franked_fraction,
+        company_tax_rate=company_tax_rate,
+        capital_growth_pct=shares_cap_growth,
+        management_fee_pct=management_fee_pct,
+        marginal_tax_rate=marginal_tax_rate,
+        holding_years=portfolio_years,
+        inflation_rate=inflation_rate,
+    )
+
+    portfolio_results = [shares_path, established_path, new_build_path]
+    best_path = max(portfolio_results, key=lambda result: result.ending_wealth)
+    st.success(
+        f"On these settings, **{best_path.name}** finishes strongest at **{money(best_path.ending_wealth)}** after tax over **{portfolio_years} years**."
+    )
+
+    portfolio_df = pd.DataFrame(
+        [
+            {
+                "Path": result.name,
+                "Properties bought": result.purchases if result.purchases else "n/a",
+                "Terminal asset value": money(result.asset_value),
+                "Debt at end": money(result.debt),
+                "Cash / offset at end": money(result.cash),
+                "Exit tax": money(result.exit_tax),
+                "Worst annual property cashflow": money(result.worst_cashflow_year),
+                "Final-year cashflow": money(result.final_year_cashflow),
+                "After-tax ending wealth": money(result.ending_wealth),
+                "Read": result.explanation,
+            }
+            for result in portfolio_results
+        ]
+    )
+    render_wrapped_table(portfolio_df)
+
+    portfolio_chart_df = pd.DataFrame(
+        [{"Path": result.name, "After-tax ending wealth": result.ending_wealth} for result in portfolio_results]
+    )
+    st.bar_chart(portfolio_chart_df.set_index("Path"), width="stretch")
+
+    st.markdown("**Year-by-year purchase path**")
+    selected_path_name = st.selectbox(
+        "Show yearly details for",
+        [result.name for result in portfolio_results],
+        index=1,
+    )
+    selected_path = next(result for result in portfolio_results if result.name == selected_path_name)
+    yearly_df = pd.DataFrame(selected_path.yearly_rows)
+    for column in ["Portfolio cashflow", "Cash / offset", "Property value", "Debt", "Usable equity estimate", "Share portfolio"]:
+        if column in yearly_df.columns:
+            yearly_df[column] = yearly_df[column].apply(money)
+    render_wrapped_table(yearly_df)
+
+    st.markdown("**Why this differs from the old single-property view**")
+    st.write(
+        "The old comparison treated the property path as one purchase and let surplus cash sit beside it. This view asks whether the household can keep recycling income, cash and equity into additional assets. Under the proposed rules, established properties usually hit the wall earlier because their losses stop helping salary-tax cashflow after the transition year. New builds can carry more debt for longer, but only if the extra leverage still passes the same household serviceability tests."
+    )
 
 with tab_areas:
     st.subheader("Likely winners and losers if the proposal becomes the new normal")

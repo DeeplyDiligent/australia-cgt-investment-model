@@ -91,6 +91,78 @@ PROPOSAL_UPDATES = [
         "source_label": "William Buck Federal Budget Analysis 2026",
         "source_url": "https://williambuck.com/tools/federal-budget-2026/negative-gearing/",
     },
+    {
+        "topic": "Widely held trusts and superannuation funds exempt from negative gearing restriction",
+        "status": "Budget proposal",
+        "effective": "From 1 July 2027",
+        "summary": (
+            "Investments held through widely held trusts, complying superannuation funds and build-to-rent developments "
+            "are explicitly exempt from the restriction on negative gearing for established residential properties. "
+            "Private investors supporting Government Housing programs also retain access."
+        ),
+        "impact": (
+            "Investors who hold established residential property inside super (including SMSFs) or widely held trust "
+            "structures are not affected by the negative gearing quarantine. This creates a structural advantage for "
+            "superannuation-based property investment relative to personal-name or family trust ownership."
+        ),
+        "source_label": "William Buck Federal Budget Analysis 2026",
+        "source_url": "https://williambuck.com/tools/federal-budget-2026/negative-gearing/",
+    },
+    {
+        "topic": "Discretionary (family) trust minimum tax of 30% from 1 July 2028",
+        "status": "Budget proposal",
+        "effective": "From 1 July 2028 (rollover relief available from 1 July 2027)",
+        "summary": (
+            "A separate but related reform introduces a 30% minimum tax on the taxable income of discretionary trusts "
+            "from 1 July 2028. The tax is levied on the trustee, with beneficiaries receiving non-refundable credits. "
+            "Fixed trusts (unit trusts), complying superannuation funds, charitable trusts, deceased estates and special "
+            "disability trusts are excluded. Primary production income and income applied for vulnerable minors are also excluded. "
+            "Three years of rollover relief is provided from 1 July 2027 to allow restructuring."
+        ),
+        "impact": (
+            "This effectively ends the traditional use of family trusts to stream income to low-marginal-rate beneficiaries "
+            "or 'bucket' companies. All trust income will now be taxed at a minimum of 30%. Investors currently using "
+            "discretionary trusts to hold investment properties or share portfolios will need to model whether restructuring "
+            "into a unit trust, company or individual name makes sense — each with its own CGT and stamp duty consequences."
+        ),
+        "source_label": "Clayton Utz Budget 2026-27 Analysis",
+        "source_url": "https://www.claytonutz.com/insights/2026/may/australian-budget-2026-27-sweeping-tax-changes-to-bring-foreseeable-and-unintended-consequences-for-investors",
+    },
+    {
+        "topic": "CGT minimum tax exemption for income support and Age Pension recipients",
+        "status": "Budget proposal",
+        "effective": "From 1 July 2027",
+        "summary": (
+            "Income support recipients, including Age Pension recipients, are explicitly exempt from the new 30% minimum "
+            "tax on real capital gains. They are still subject to CPI cost-base indexation replacing the 50% discount, "
+            "but their gains are not subject to the minimum tax floor."
+        ),
+        "impact": (
+            "Retirees on the Age Pension or other income support who sell assets after 1 July 2027 face a lighter CGT "
+            "outcome than working investors. The minimum tax is the mechanism that most affects high-income individuals "
+            "who could otherwise time a sale into a low-income year."
+        ),
+        "source_label": "Clayton Utz Budget 2026-27 Analysis",
+        "source_url": "https://www.claytonutz.com/insights/2026/may/australian-budget-2026-27-sweeping-tax-changes-to-bring-foreseeable-and-unintended-consequences-for-investors",
+    },
+    {
+        "topic": "Pre-1985 assets lose CGT exemption for gains accruing after 1 July 2027",
+        "status": "Budget proposal",
+        "effective": "For gains accruing from 1 July 2027 onwards",
+        "summary": (
+            "Assets acquired before 20 September 1985 (pre-CGT assets) are currently fully exempt from capital gains tax. "
+            "Under the proposal, this exemption is preserved only for gains accrued up to 30 June 2027. Any gain accruing "
+            "on a pre-CGT asset from 1 July 2027 onwards will be subject to the new indexation and minimum-tax regime. "
+            "Taxpayers can use a market valuation at 1 July 2027 or an ATO apportionment formula to split gains."
+        ),
+        "impact": (
+            "This is a significant change for holders of long-standing pre-CGT assets such as family farms, commercial "
+            "buildings and business interests acquired before 1985. From 1 July 2027, those assets are no longer fully "
+            "sheltered. Holders should obtain valuations and model the cost-base split well before disposal."
+        ),
+        "source_label": "Clayton Utz Budget 2026-27 Analysis",
+        "source_url": "https://www.claytonutz.com/insights/2026/may/australian-budget-2026-27-sweeping-tax-changes-to-bring-foreseeable-and-unintended-consequences-for-investors",
+    },
 ]
 
 FUTURE_OUTLOOK = [
@@ -117,6 +189,18 @@ FUTURE_OUTLOOK = [
         "future_view": "Potential relative winner",
         "core_reason": "Technical commentary suggests the residential negative gearing reform does not directly target commercial property.",
         "who_it_suits": "Investors comfortable with vacancy, tenant and asset-specific risk, and usually larger lot sizes or syndicate structures.",
+    },
+    {
+        "asset": "Investments held inside superannuation",
+        "future_view": "Structural advantage strengthened",
+        "core_reason": "Super funds are exempt from the negative gearing quarantine for established residential property, and super fund income is taxed at a maximum of 15% — well below the 30% CGT minimum that applies to individuals.",
+        "who_it_suits": "Investors within 10–20 years of retirement who have capacity to increase super contributions and build a tax-sheltered investment base.",
+    },
+    {
+        "asset": "Discretionary (family) trust structures",
+        "future_view": "Significantly less effective from 2028",
+        "core_reason": "The 30% minimum trust tax from 1 July 2028 eliminates income streaming to low-rate beneficiaries and effectively ends 'bucket company' strategies. Rollover relief is available to 2030.",
+        "who_it_suits": "Existing trust holders who act early to model restructuring options. New investors should avoid discretionary trusts for investment unless a primary production or specific exemption applies.",
     },
 ]
 

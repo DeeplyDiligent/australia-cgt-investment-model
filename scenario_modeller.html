@@ -1,0 +1,1467 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Investment Scenario Modeller</title>
+<style>
+  :root {
+    --bg: #0f1419;
+    --panel: #1a2028;
+    --panel-2: #232b36;
+    --border: #2e3845;
+    --text: #e6edf3;
+    --muted: #8b98a8;
+    --accent: #4cc2ff;
+    --good: #4ade80;
+    --bad: #f87171;
+    --warn: #fbbf24;
+    --property: #f97316;
+    --stock: #60a5fa;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--text); font-family: -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 14px; }
+  h1, h2, h3 { margin: 0 0 8px 0; font-weight: 600; }
+  h1 { font-size: 20px; }
+  h2 { font-size: 15px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.05em; }
+  h3 { font-size: 13px; color: var(--muted); }
+  .app { display: grid; grid-template-columns: 340px 1fr 380px; gap: 12px; padding: 12px; min-height: 100vh; }
+  .panel { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 14px; }
+  .panel + .panel { margin-top: 12px; }
+  label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 3px; margin-top: 8px; }
+  input[type="number"], input[type="text"], select {
+    width: 100%; padding: 6px 8px; background: var(--panel-2); border: 1px solid var(--border);
+    border-radius: 4px; color: var(--text); font-size: 13px;
+  }
+  input[type="range"] { width: 100%; }
+  button { background: var(--accent); color: #08131c; border: none; padding: 8px 14px; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 13px; }
+  button.ghost { background: transparent; color: var(--accent); border: 1px solid var(--accent); }
+  button.danger { background: var(--bad); color: white; padding: 4px 8px; font-size: 11px; }
+  button.small { padding: 4px 10px; font-size: 12px; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th, td { padding: 4px 6px; text-align: right; border-bottom: 1px solid var(--border); }
+  th:first-child, td:first-child { text-align: left; }
+  th { color: var(--muted); font-weight: 500; font-size: 11px; text-transform: uppercase; }
+  tr.warn td { background: rgba(251,191,36,0.08); }
+  tr.bad td { background: rgba(248,113,113,0.10); }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .stat { background: var(--panel-2); padding: 10px; border-radius: 6px; }
+  .stat .v { font-size: 18px; font-weight: 600; }
+  .stat .l { font-size: 11px; color: var(--muted); text-transform: uppercase; }
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+  .pill.property { background: rgba(249,115,22,0.2); color: var(--property); }
+  .pill.stock { background: rgba(96,165,250,0.2); color: var(--stock); }
+  .investment { background: var(--panel-2); border-radius: 6px; padding: 10px; margin-bottom: 8px; border-left: 3px solid var(--border); }
+  .investment.property { border-left-color: var(--property); }
+  .investment.stock { border-left-color: var(--stock); }
+  .investment .hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .investment .hdr .title { font-weight: 600; }
+  .investment .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 12px; color: var(--muted); }
+  .funding-breakdown { margin-top: 8px; padding: 8px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 6px; }
+  .funding-breakdown .title { color: var(--muted); font-size: 11px; text-transform: uppercase; margin-bottom: 6px; }
+  .funding-breakdown .grid { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 4px 8px; font-size: 12px; }
+  .funding-breakdown .head { color: var(--muted); font-size: 11px; }
+  .funding-breakdown .total { color: var(--text); font-weight: 600; }
+  .timeline { display: grid; gap: 10px; }
+  .timeline-item { background: var(--panel-2); border: 1px solid var(--border); border-radius: 6px; padding: 10px; }
+  .timeline-item.start { border-left: 3px solid var(--accent); }
+  .timeline-item.property { border-left: 3px solid var(--property); }
+  .timeline-item.stock { border-left: 3px solid var(--stock); }
+  .timeline-head { display: flex; justify-content: space-between; gap: 10px; align-items: flex-start; margin-bottom: 8px; }
+  .timeline-title { font-weight: 600; }
+  .timeline-section { margin-top: 8px; }
+  .timeline-section-title { color: var(--muted); font-size: 11px; text-transform: uppercase; margin-bottom: 5px; }
+  .metric-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+  .metric { background: rgba(255,255,255,0.035); border: 1px solid rgba(255,255,255,0.04); border-radius: 4px; padding: 7px; min-width: 0; }
+  .metric .label { color: var(--muted); font-size: 10px; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .metric .value { color: var(--text); font-weight: 600; font-size: 13px; margin-top: 2px; }
+  .timeline-investment { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 6px; }
+  @media (max-width: 1200px) {
+    .metric-grid, .timeline-investment { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  canvas { max-width: 100%; }
+  .scroll { max-height: 480px; overflow-y: auto; }
+  .badge { font-size: 10px; padding: 2px 6px; border-radius: 3px; margin-left: 4px; }
+  .badge.ok { background: rgba(74,222,128,0.2); color: var(--good); }
+  .badge.warn { background: rgba(251,191,36,0.2); color: var(--warn); }
+  .badge.bad { background: rgba(248,113,113,0.2); color: var(--bad); }
+  details { background: var(--panel-2); border-radius: 6px; padding: 8px 10px; margin-bottom: 8px; }
+  summary { cursor: pointer; font-weight: 600; }
+  .muted { color: var(--muted); font-size: 11px; }
+  .tab-bar { display: flex; gap: 4px; margin-bottom: 8px; border-bottom: 1px solid var(--border); }
+  .tab-bar button { background: transparent; color: var(--muted); padding: 6px 12px; border-radius: 0; border-bottom: 2px solid transparent; }
+  .tab-bar button.active { color: var(--accent); border-bottom-color: var(--accent); }
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(5, 8, 12, 0.78);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    padding: 18px;
+  }
+  .modal {
+    width: min(980px, 100%);
+    max-height: 88vh;
+    overflow: hidden;
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    display: grid;
+    grid-template-rows: auto auto 1fr;
+  }
+  .modal-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 12px 14px 8px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .modal-body {
+    padding: 10px 14px 14px 14px;
+    overflow: auto;
+  }
+  .picker-toolbar {
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    gap: 8px;
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(255,255,255,0.01);
+  }
+  .picker-list { display: grid; gap: 8px; }
+  .picker-item {
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 10px;
+    display: grid;
+    gap: 8px;
+  }
+  .picker-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .picker-grid .k { color: var(--muted); font-size: 10px; text-transform: uppercase; }
+  .picker-grid .v { color: var(--text); font-weight: 600; }
+  @media (max-width: 1100px) {
+    .picker-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .picker-toolbar { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script type="module">
+import { h, render } from 'https://esm.sh/preact@10.22.0';
+import { useState, useMemo, useEffect, useRef } from 'https://esm.sh/preact@10.22.0/hooks';
+import htm from 'https://esm.sh/htm@3.1.1';
+import Chart from 'https://esm.sh/chart.js@4.4.3/auto';
+import {
+  START_YEAR, END_YEAR, YEARS, AVAILABLE_TO_INVEST, INITIAL_STATE, DEFAULT_GLOBALS,
+  fmt, fmtK, pct, simulate, borrowingCapacity, afterTaxIncome, householdGross, householdNet,
+  defaultGrowthScheduleForProperty, growthScheduleSummary, priceBandThresholdsForYear,
+  fundingCashPct, fundingParts,
+} from './engine.js?v=4';
+
+const html = htm.bind(h);
+
+function uid() { return Math.random().toString(36).slice(2, 9); }
+
+// ---------- UI COMPONENTS ----------
+const STORAGE_KEY = 'scenario-modeller-v1';
+const SCENARIO_PARAM = 'scenario';
+const DEFAULT_OPTIMIZER_JSONL = 'optimizer_50_buys_deeper_best.jsonl';
+
+function toBase64Url(jsonText) {
+  return btoa(unescape(encodeURIComponent(jsonText)))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/g, '');
+}
+
+function fromBase64Url(base64Url) {
+  const b64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  const padded = b64 + '='.repeat((4 - (b64.length % 4)) % 4);
+  return decodeURIComponent(escape(atob(padded)));
+}
+
+function parseScenarioFromQuery() {
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const raw = params.get(SCENARIO_PARAM);
+    if (!raw) return null;
+    return JSON.parse(fromBase64Url(raw));
+  } catch (e) {
+    console.warn('Failed to parse scenario query param', e);
+    return null;
+  }
+}
+
+function buildShareUrl(state) {
+  const url = new URL(window.location.href);
+  url.searchParams.set(SCENARIO_PARAM, toBase64Url(JSON.stringify(state)));
+  return url.toString();
+}
+
+function parseScenarioFromUrl(urlValue) {
+  try {
+    const parsed = new URL(urlValue, window.location.origin);
+    const raw = parsed.searchParams.get(SCENARIO_PARAM);
+    if (!raw) return null;
+    return JSON.parse(fromBase64Url(raw));
+  } catch (e) {
+    console.warn('Failed to parse scenarioUrl from optimizer event', e);
+    return null;
+  }
+}
+
+function loadSaved() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch (e) { console.warn('Failed to load saved state', e); return null; }
+}
+
+function normalizeScenarioState(source) {
+  return {
+    globals: source?.globals
+      ? { ...DEFAULT_GLOBALS, ...source.globals, ppor: { ...DEFAULT_GLOBALS.ppor, ...(source.globals.ppor||{}) } }
+      : DEFAULT_GLOBALS,
+    investments: source?.investments ?? DEFAULT_INVESTMENTS,
+    tab: source?.tab ?? 'chart',
+  };
+}
+
+const DEFAULT_INVESTMENTS = [
+  { id: 'sample', name: 'IP - Established 2028', type: 'property', subtype: 'established', year: 2028, price: 700000,
+    depositPct: 20, yieldPct: 4.0, growthMode: 'auto', interestPct: 6.2 },
+];
+
+function investmentGrowthMode(inv) {
+  return inv.growthMode || (inv.growthSchedule?.length ? 'phased' : (inv.growthPct != null ? 'fixed' : 'auto'));
+}
+
+function growthSummaryForInvestment(inv, globals) {
+  const mode = investmentGrowthMode(inv);
+  if (mode === 'fixed') return `${(inv.growthPct ?? 0).toFixed(1)}% fixed`;
+  if (mode === 'phased') return growthScheduleSummary(inv.growthSchedule || []);
+  return growthScheduleSummary(defaultGrowthScheduleForProperty(inv.subtype || 'established', inv.price || 0, inv.year || START_YEAR, globals));
+}
+
+function buildGrowthPayload(source) {
+  const growthMode = source.growthMode || 'auto';
+  if (growthMode === 'fixed') {
+    return { growthMode, growthPct: +source.growthPct, growthSchedule: [] };
+  }
+  if (growthMode === 'phased') {
+    return {
+      growthMode,
+      growthPct: null,
+      growthSchedule: [
+        { years: +source.growthPhase1Years, pct: +source.growthPhase1Pct },
+        { years: +source.growthPhase2Years, pct: +source.growthPhase2Pct },
+        { years: null, pct: +source.growthPhase3Pct },
+      ],
+    };
+  }
+  return { growthMode: 'auto', growthPct: null, growthSchedule: [] };
+}
+
+function phasedDefaults(schedule = []) {
+  const phase1 = schedule[0] || { years: 5, pct: 2 };
+  const phase2 = schedule[1] || { years: 5, pct: 4 };
+  const phase3 = schedule[2] || { years: null, pct: 5 };
+  return {
+    growthPhase1Years: phase1.years ?? 5,
+    growthPhase1Pct: phase1.pct ?? 2,
+    growthPhase2Years: phase2.years ?? 5,
+    growthPhase2Pct: phase2.pct ?? 4,
+    growthPhase3Pct: phase3.pct ?? 5,
+  };
+}
+
+function GrowthEditor({ value, setValue, subtype, price, year, globals }) {
+  const mode = value.growthMode || 'auto';
+  const autoSummary = growthScheduleSummary(defaultGrowthScheduleForProperty(subtype, price, year, globals));
+  const bands = priceBandThresholdsForYear(year, globals);
+  return html`
+    <label>Growth mode</label>
+    <select value=${mode} onChange=${e=>setValue('growthMode', e.target.value)}>
+      <option value="auto">Auto realistic</option>
+      <option value="fixed">Fixed annual rate</option>
+      <option value="phased">Phased growth schedule</option>
+    </select>
+    ${mode === 'auto' && html`<div class="muted" style="margin-top:6px">${autoSummary}<br/>${year} bands: ${fmt(Math.round(bands.lower))} to ${fmt(Math.round(bands.upper))} for the middle bucket</div>`}
+    ${mode === 'fixed' && html`<${NumField} label="Growth %" value=${value.growthPct} step=${0.1} onChange=${v=>setValue('growthPct', v)} />`}
+    ${mode === 'phased' && html`
+      <div class="row">
+        <${NumField} label="Phase 1 years" value=${value.growthPhase1Years} step=${1} onChange=${v=>setValue('growthPhase1Years', v)} />
+        <${NumField} label="Phase 1 %" value=${value.growthPhase1Pct} step=${0.1} onChange=${v=>setValue('growthPhase1Pct', v)} />
+      </div>
+      <div class="row">
+        <${NumField} label="Phase 2 years" value=${value.growthPhase2Years} step=${1} onChange=${v=>setValue('growthPhase2Years', v)} />
+        <${NumField} label="Phase 2 %" value=${value.growthPhase2Pct} step=${0.1} onChange=${v=>setValue('growthPhase2Pct', v)} />
+      </div>
+      <${NumField} label="Phase 3 ongoing %" value=${value.growthPhase3Pct} step=${0.1} onChange=${v=>setValue('growthPhase3Pct', v)} />
+    `}
+  `;
+}
+
+function fundingLabel(inv) {
+  const pct = fundingCashPct(inv);
+  if (pct <= 0) return 'equity';
+  if (pct >= 100) return 'cash';
+  return `${pct}% cash / ${100 - pct}% equity`;
+}
+
+function FundingEditor({ value, setValue }) {
+  const source = value.depositSource || 'cash';
+  const cashPct = fundingCashPct(value);
+  return html`
+    <label>Funding source</label>
+    <select value=${source} onChange=${e=>setValue('depositSource', e.target.value)}>
+      <option value="cash">Cash</option>
+      <option value="equity">Equity</option>
+      <option value="mixed">Mixed cash/equity</option>
+    </select>
+    ${source === 'mixed' && html`<${NumField} label="Cash share" suffix="%" value=${cashPct} step=${5} onChange=${v=>setValue('cashFundingPct', v)} />`}
+  `;
+}
+
+function PropertyFundingBreakdown({ investment, globals, compact = false }) {
+  const price = Number(investment?.price || 0);
+  const depositPct = Number(investment?.depositPct ?? globals.depositPct ?? 0);
+  const stampDutyPct = Number(globals?.stampDutyPct ?? 0);
+  const deposit = price * depositPct / 100;
+  const costs = price * stampDutyPct / 100;
+  const depositParts = fundingParts(deposit, investment);
+  const costParts = fundingParts(costs, investment);
+  const totalCash = depositParts.cashUsed + costParts.cashUsed;
+  const totalEquity = depositParts.equityDraw + costParts.equityDraw;
+
+  return html`
+    <div class="funding-breakdown">
+      <div class="title">Property funding dollars</div>
+      <div class="grid">
+        <div class="head"></div><div class="head">Cash</div><div class="head">Equity</div>
+        <div>Deposit</div><div>${fmt(depositParts.cashUsed)}</div><div>${fmt(depositParts.equityDraw)}</div>
+        ${!compact && html`<div>Stamp/costs</div><div>${fmt(costParts.cashUsed)}</div><div>${fmt(costParts.equityDraw)}</div>`}
+        <div class="total">Total upfront</div><div class="total">${fmt(totalCash)}</div><div class="total">${fmt(totalEquity)}</div>
+      </div>
+    </div>
+  `;
+}
+
+function App() {
+  const fromQuery = parseScenarioFromQuery();
+  const initial = normalizeScenarioState(fromQuery || loadSaved());
+
+  if (fromQuery) {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(initial));
+    } catch (e) { console.warn('Failed to replace saved state from scenario query', e); }
+  }
+
+  const [globals, setGlobals] = useState(initial.globals);
+  const [investments, setInvestments] = useState(initial.investments);
+  const [tab, setTab] = useState(initial.tab);
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [pickerLoading, setPickerLoading] = useState(false);
+  const [pickerError, setPickerError] = useState('');
+  const [pickerPath, setPickerPath] = useState(DEFAULT_OPTIMIZER_JSONL);
+  const [pickerEntries, setPickerEntries] = useState([]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ globals, investments, tab }));
+    } catch (e) { console.warn('Failed to save state', e); }
+  }, [globals, investments, tab]);
+
+  const resetAll = () => {
+    if (!confirm('Reset all assumptions and investments to defaults? This will clear your saved scenario.')) return;
+    localStorage.removeItem(STORAGE_KEY);
+    setGlobals(DEFAULT_GLOBALS);
+    setInvestments(DEFAULT_INVESTMENTS);
+    setTab('chart');
+  };
+
+  const sim = useMemo(() => simulate(globals, investments), [globals, investments]);
+
+  const addInvestment = (inv) => setInvestments([...investments, { id: uid(), ...inv }]);
+  const updateInvestment = (id, patch) => setInvestments(investments.map(i => i.id === id ? {...i, ...patch} : i));
+  const removeInvestment = (id) => setInvestments(investments.filter(i => i.id !== id));
+  const copyShareLink = async () => {
+    const url = buildShareUrl({ globals, investments, tab });
+    try {
+      await navigator.clipboard.writeText(url);
+      alert('Share link copied to clipboard.');
+    } catch (e) {
+      console.warn('Clipboard copy failed', e);
+      prompt('Copy this scenario link:', url);
+    }
+  };
+
+  const applyScenarioFromState = (source) => {
+    const normalized = normalizeScenarioState(source);
+    setGlobals(normalized.globals);
+    setInvestments(normalized.investments);
+    setTab(normalized.tab);
+  };
+
+  const loadOptimizerJsonl = async () => {
+    setPickerLoading(true);
+    setPickerError('');
+    try {
+      const response = await fetch(`${pickerPath}?t=${Date.now()}`, { cache: 'no-store' });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const text = await response.text();
+      const entries = text
+        .split(/\r?\n/)
+        .map(line => line.trim())
+        .filter(Boolean)
+        .map((line, idx) => {
+          try { return { idx, ...JSON.parse(line) }; }
+          catch { return null; }
+        })
+        .filter(Boolean)
+        .sort((a, b) => (b.finalNetWorth || 0) - (a.finalNetWorth || 0));
+      setPickerEntries(entries);
+      if (!entries.length) setPickerError('No valid JSONL entries found in the selected file.');
+    } catch (e) {
+      console.warn('Failed to load optimizer JSONL file', e);
+      setPickerEntries([]);
+      setPickerError(`Could not load ${pickerPath}. Ensure it is in the same folder as this page and served by the local web server.`);
+    } finally {
+      setPickerLoading(false);
+    }
+  };
+
+  const openPicker = async () => {
+    setPickerOpen(true);
+    await loadOptimizerJsonl();
+  };
+
+  const applyOptimizerEntry = (entry) => {
+    const scenario = entry?.scenario || parseScenarioFromUrl(entry?.scenarioUrl || '');
+    if (!scenario) {
+      alert('This entry does not contain a valid scenario payload.');
+      return;
+    }
+    applyScenarioFromState(scenario);
+    setPickerOpen(false);
+  };
+
+  return html`
+    <div class="app">
+      <${LeftPanel}
+        globals=${globals}
+        setGlobals=${setGlobals}
+        sim=${sim}
+        resetAll=${resetAll}
+        copyShareLink=${copyShareLink}
+        openScenarioPicker=${openPicker} />
+      <${CenterPanel} sim=${sim} tab=${tab} setTab=${setTab} globals=${globals} investments=${investments} />
+      <${RightPanel}
+        investments=${investments}
+        addInvestment=${addInvestment}
+        updateInvestment=${updateInvestment}
+        removeInvestment=${removeInvestment}
+        globals=${globals}
+        sim=${sim} />
+
+      ${pickerOpen && html`
+        <div class="modal-backdrop" onClick=${()=>setPickerOpen(false)}>
+          <div class="modal" onClick=${e=>e.stopPropagation()}>
+            <div class="modal-head">
+              <div>
+                <h2>Load optimizer scenario</h2>
+                <div class="muted">Pick a line from optimizer JSONL and apply it to the current model.</div>
+              </div>
+              <button class="ghost small" onClick=${()=>setPickerOpen(false)}>Close</button>
+            </div>
+
+            <div class="picker-toolbar">
+              <input type="text" value=${pickerPath} onInput=${e=>setPickerPath(e.target.value)} />
+              <button class="ghost small" onClick=${loadOptimizerJsonl}>Reload file</button>
+              <div class="muted" style="align-self:center">${pickerLoading ? 'Loading...' : `${pickerEntries.length} entries`}</div>
+            </div>
+
+            <div class="modal-body">
+              ${pickerError && html`<div class="muted" style="color:var(--warn);margin-bottom:8px">${pickerError}</div>`}
+              <div class="picker-list">
+                ${pickerEntries.map(entry => html`
+                  <div class="picker-item">
+                    <div class="picker-grid">
+                      <div><div class="k">Net worth</div><div class="v" style="color:var(--good)">${fmt(entry.finalNetWorth || 0)}</div></div>
+                      <div><div class="k">Buys</div><div class="v">${entry.additionalInvestments ?? 0}</div></div>
+                      <div><div class="k">Depth</div><div class="v">${entry.depth ?? 0}</div></div>
+                      <div><div class="k">Evaluations</div><div class="v">${(entry.evaluations || 0).toLocaleString()}</div></div>
+                      <div><div class="k">Debt</div><div class="v">${fmt(entry.finalDebt || 0)}</div></div>
+                      <div><div class="k">Cash</div><div class="v">${fmt(entry.finalCash || 0)}</div></div>
+                    </div>
+                    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+                      <div class="muted">${entry.foundAt || 'unknown time'} · ${entry.kind || 'event'}</div>
+                      <button class="small" onClick=${()=>applyOptimizerEntry(entry)}>Apply scenario</button>
+                    </div>
+                  </div>
+                `)}
+              </div>
+            </div>
+          </div>
+        </div>
+      `}
+    </div>
+  `;
+}
+
+function NumField({ label, value, onChange, step = 1, suffix }) {
+  return html`
+    <div>
+      <label>${label}${suffix ? html` <span class="muted">(${suffix})</span>` : ''}</label>
+      <input type="number" step=${step} value=${value}
+        onInput=${e => onChange(parseFloat(e.target.value) || 0)} />
+    </div>
+  `;
+}
+
+function LeftPanel({ globals, setGlobals, sim, resetAll, copyShareLink, openScenarioPicker }) {
+  const set = (k, v) => setGlobals({ ...globals, [k]: v });
+  const setPpor = (k, v) => setGlobals({ ...globals, ppor: { ...globals.ppor, [k]: v }});
+
+  const final = sim.yearRows[sim.yearRows.length - 1];
+  const start = sim.yearRows[0];
+  const initialIpEquity = INITIAL_STATE.investmentProperties
+    .reduce((sum, p) => sum + (p.price - p.loan), 0);
+  const initialUsableIpEquity = INITIAL_STATE.investmentProperties
+    .reduce((sum, p) => sum + Math.max(0, 0.8 * p.price - p.loan), 0);
+  const initialUsablePporEquity = Math.max(0, 0.8 * INITIAL_STATE.ppor.value - INITIAL_STATE.ppor.loan);
+
+  return html`
+    <div>
+      <div class="panel">
+        <h1>Scenario Modeller</h1>
+        <div class="muted">2026 → 2049 · model property and stock purchases</div>
+        <div style="margin-top:10px;display:flex;align-items:center;gap:8px">
+          <span class="badge ok" title="Changes are auto-saved to your browser">● Auto-saved</span>
+          <button class="ghost small" onClick=${copyShareLink}>Copy share link</button>
+          <button class="ghost small" onClick=${openScenarioPicker}>Load optimizer scenario</button>
+          <button class="ghost small" onClick=${resetAll}>Reset scenario</button>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>Current state (Feb 2026)</h2>
+        <div class="row">
+          <div class="stat"><div class="l">Cash</div><div class="v">${fmtK(INITIAL_STATE.cash)}</div></div>
+          <div class="stat"><div class="l">Stocks</div><div class="v">${fmtK(INITIAL_STATE.stocks)}</div></div>
+          <div class="stat"><div class="l">PPOR equity</div><div class="v">${fmtK(INITIAL_STATE.ppor.value - INITIAL_STATE.ppor.loan)}</div></div>
+          <div class="stat"><div class="l">IP equity</div><div class="v">${fmtK(initialIpEquity)}</div></div>
+          <div class="stat" style="grid-column:span 2"><div class="l">Usable equity @ 80% LVR</div><div class="v">${fmtK(initialUsablePporEquity + initialUsableIpEquity)}</div></div>
+        </div>
+        <div style="margin-top:10px" class="stat">
+          <div class="l">Starting net worth</div>
+          <div class="v">${fmt(start?.netWorth - (start?.surplus || 0))}</div>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>Outcome (${END_YEAR})</h2>
+        <div class="row">
+          <div class="stat"><div class="l">Net worth</div><div class="v" style="color:var(--good)">${fmtK(final?.netWorth)}</div></div>
+          <div class="stat"><div class="l">Debt</div><div class="v" style="color:var(--bad)">${fmtK(final?.totalDebt)}</div></div>
+          <div class="stat"><div class="l">Cash</div><div class="v">${fmtK(final?.cash)}</div></div>
+          <div class="stat"><div class="l">Properties</div><div class="v">${final?.ipCount}</div></div>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>Global assumptions</h2>
+        <div class="row">
+          <${NumField} label="Your gross income" value=${globals.grossIncome} step=${1000} onChange=${v=>set('grossIncome',v)} />
+          <${NumField} label="Partner gross income" value=${globals.partnerGrossIncome} step=${1000} onChange=${v=>set('partnerGrossIncome',v)} />
+        </div>
+        <${NumField} label="Income growth" suffix="%/yr" value=${globals.incomeGrowthPct ?? 0} step=${0.1} onChange=${v=>set('incomeGrowthPct',v)} />
+        <div class="muted" style="margin-top:4px">Household gross: <strong style="color:var(--text)">${fmt(householdGross(globals))}</strong> now / <strong style="color:var(--text)">${fmt(householdGross(globals, END_YEAR))}</strong> in ${END_YEAR} · net: <strong style="color:var(--text)">${fmt(householdNet(globals))}</strong> now</div>
+        <div class="row">
+          <${NumField} label="MTR (owner of IPs)" suffix="0-1" value=${globals.marginalTaxRate} step=${0.01} onChange=${v=>set('marginalTaxRate',v)} />
+          <${NumField} label="Cash return" suffix="%" value=${globals.cashReturnPct} step=${0.1} onChange=${v=>set('cashReturnPct',v)} />
+        </div>
+        <div class="row">
+          <${NumField} label="2026 surplus remaining" suffix="0-1" value=${globals.currentYearSurplusFraction} step=${0.01} onChange=${v=>set('currentYearSurplusFraction',v)} />
+          <${NumField} label="Lower band drift (600k line)" suffix="%" value=${globals.lowerBandDriftPct ?? globals.categoryPriceBandDriftPct} step=${0.1} onChange=${v=>set('lowerBandDriftPct',v)} />
+        </div>
+        <div class="row">
+          <${NumField} label="Upper band drift (800k line)" suffix="%" value=${globals.upperBandDriftPct ?? globals.categoryPriceBandDriftPct} step=${0.1} onChange=${v=>set('upperBandDriftPct',v)} />
+          <div></div>
+        </div>
+        <h3 style="margin-top:14px">Property</h3>
+        <div class="row">
+          <${NumField} label="Interest rate" suffix="%" value=${globals.interestRatePct} step=${0.1} onChange=${v=>set('interestRatePct',v)} />
+          <${NumField} label="Holding cost" suffix="% of val" value=${globals.nonInterestCostPct} step=${0.1} onChange=${v=>set('nonInterestCostPct',v)} />
+        </div>
+        <div class="row">
+          <${NumField} label="Default growth" suffix="%" value=${globals.propertyGrowthPct} step=${0.1} onChange=${v=>set('propertyGrowthPct',v)} />
+          <${NumField} label="Default yield" suffix="%" value=${globals.propertyYieldPct} step=${0.1} onChange=${v=>set('propertyYieldPct',v)} />
+        </div>
+        <div class="row">
+          <${NumField} label="Principal repay" suffix="% loan/yr" value=${globals.principalRepayPct} step=${0.1} onChange=${v=>set('principalRepayPct',v)} />
+          <${NumField} label="Stamp+costs" suffix="%" value=${globals.stampDutyPct} step=${0.1} onChange=${v=>set('stampDutyPct',v)} />
+        </div>
+        <h3 style="margin-top:14px">Stocks</h3>
+        <div class="row">
+          <${NumField} label="Total growth" suffix="%" value=${globals.stockGrowthPct} step=${0.1} onChange=${v=>set('stockGrowthPct',v)} />
+          <${NumField} label="Dividend yield" suffix="%" value=${globals.stockDividendPct} step=${0.1} onChange=${v=>set('stockDividendPct',v)} />
+        </div>
+        <${NumField} label="Dividend tax after franking" suffix="%" value=${globals.stockDividendTaxRatePct} step=${0.1} onChange=${v=>set('stockDividendTaxRatePct',v)} />
+        <h3 style="margin-top:14px">Borrowing rules</h3>
+        <div class="row">
+          <${NumField} label="DTI cap" suffix="× income" value=${globals.dtiCap} step=${0.1} onChange=${v=>set('dtiCap',v)} />
+          <${NumField} label="Stress buffer" suffix="%" value=${globals.stressBufferPct} step=${0.1} onChange=${v=>set('stressBufferPct',v)} />
+        </div>
+        <div class="row">
+          <${NumField} label="Living expenses (HEM)" suffix="$/yr" value=${globals.livingExpensesAnnual} step=${1000} onChange=${v=>set('livingExpensesAnnual',v)} />
+          <${NumField} label="Rent shading" suffix="%" value=${globals.rentShadingPct} step=${1} onChange=${v=>set('rentShadingPct',v)} />
+        </div>
+        <${NumField} label="Protected cash buffer" suffix="$" value=${globals.minCashBuffer || 0} step=${1000} onChange=${v=>set('minCashBuffer',v)} />
+        <h3 style="margin-top:14px">PPOR</h3>
+        <div class="row">
+          <${NumField} label="Growth" suffix="%" value=${globals.ppor.growthPct} step=${0.1} onChange=${v=>setPpor('growthPct',v)} />
+          <${NumField} label="Loan rate" suffix="%" value=${globals.ppor.loanRatePct ?? 5.95} step=${0.1} onChange=${v=>setPpor('loanRatePct',v)} />
+        </div>
+        <div class="row">
+          <${NumField} label="Monthly repayment" suffix="$" value=${globals.ppor.repaymentMonthly ?? 4499} step=${50} onChange=${v=>setPpor('repaymentMonthly',v)} />
+          <${NumField} label="Remaining term" suffix="years" value=${globals.ppor.remainingTermYears ?? 28} step=${1} onChange=${v=>setPpor('remainingTermYears',v)} />
+        </div>
+        <div class="muted" style="margin-top:4px">Cash is treated as PPOR offset, so it reduces home-loan interest rather than earning cash interest.</div>
+      </div>
+    </div>
+  `;
+}
+
+function CenterPanel({ sim, tab, setTab, globals, investments }) {
+  return html`
+    <div>
+      <div class="panel">
+        <div class="tab-bar">
+          <button class=${tab==='chart'?'active':''} onClick=${()=>setTab('chart')}>Net worth & debt</button>
+          <button class=${tab==='cash'?'active':''} onClick=${()=>setTab('cash')}>Cash & surplus</button>
+          <button class=${tab==='borrow'?'active':''} onClick=${()=>setTab('borrow')}>Borrowing capacity</button>
+          <button class=${tab==='buckets'?'active':''} onClick=${()=>setTab('buckets')}>Price buckets</button>
+          <button class=${tab==='table'?'active':''} onClick=${()=>setTab('table')}>Yearly table</button>
+        </div>
+        ${tab==='chart' && html`<${StackChart} sim=${sim} />`}
+        ${tab==='cash' && html`<${CashChart} sim=${sim} />`}
+        ${tab==='borrow' && html`<${BorrowChart} sim=${sim} globals=${globals} />`}
+        ${tab==='buckets' && html`<${BucketChart} sim=${sim} globals=${globals} investments=${investments} />`}
+        ${tab==='table' && html`<${YearTable} sim=${sim} />`}
+      </div>
+      <div class="panel">
+        <h2>Warnings</h2>
+        <${WarningsList} sim=${sim} />
+      </div>
+      <div class="panel">
+        <h2>Investment timeline</h2>
+        <${InvestmentTimeline} sim=${sim} />
+      </div>
+    </div>
+  `;
+}
+
+function useChart(buildConfig, deps) {
+  const ref = useRef(null);
+  const chartRef = useRef(null);
+  useEffect(() => {
+    if (chartRef.current) chartRef.current.destroy();
+    chartRef.current = new Chart(ref.current.getContext('2d'), buildConfig());
+    return () => { if (chartRef.current) chartRef.current.destroy(); };
+  }, deps);
+  return ref;
+}
+
+const CHART_OPTS = {
+  responsive: true,
+  maintainAspectRatio: false,
+  interaction: { mode: 'index', intersect: false },
+  plugins: { legend: { labels: { color: '#e6edf3' } }, tooltip: { callbacks: { label: ctx => `${ctx.dataset.label}: ${fmt(ctx.parsed.y)}` } } },
+  scales: {
+    x: { ticks: { color: '#8b98a8' }, grid: { color: '#2e3845' } },
+    y: { ticks: { color: '#8b98a8', callback: v => '$'+(v/1000).toFixed(0)+'k' }, grid: { color: '#2e3845' } },
+  },
+};
+
+function StackChart({ sim }) {
+  const r = sim.yearRows;
+  const ref = useChart(() => ({
+    type: 'line',
+    data: {
+      labels: r.map(x=>x.year),
+      datasets: [
+        { label: 'Net worth', data: r.map(x=>x.netWorth), borderColor: '#4ade80', backgroundColor: 'rgba(74,222,128,.15)', tension: 0.3, fill: false, borderWidth: 2.5 },
+        { label: 'IP value', data: r.map(x=>x.ipValue), borderColor: '#f97316', backgroundColor: 'rgba(249,115,22,.2)', tension: 0.3, fill: true },
+        { label: 'Stocks', data: r.map(x=>x.stocks), borderColor: '#60a5fa', backgroundColor: 'rgba(96,165,250,.2)', tension: 0.3, fill: true },
+        { label: 'PPOR value', data: r.map(x=>x.pporValue), borderColor: '#a78bfa', backgroundColor: 'rgba(167,139,250,.15)', tension: 0.3, fill: true },
+        { label: 'Total debt', data: r.map(x=>-x.totalDebt), borderColor: '#f87171', backgroundColor: 'rgba(248,113,113,.15)', tension: 0.3, fill: true },
+      ],
+    },
+    options: CHART_OPTS,
+  }), [sim]);
+  return html`<div style="height:420px"><canvas ref=${ref}></canvas></div>`;
+}
+
+function CashChart({ sim }) {
+  const r = sim.yearRows;
+  const ref = useChart(() => ({
+    type: 'bar',
+    data: {
+      labels: r.map(x=>x.year),
+      datasets: [
+        { type:'bar', label:'Salary surplus', data: r.map(x=>x.surplus), backgroundColor:'rgba(74,222,128,.6)' },
+        { type:'bar', label:'IP cashflow (after tax)', data: r.map(x=>x.ipCashflow), backgroundColor: r.map(x=>x.ipCashflow>=0?'rgba(96,165,250,.6)':'rgba(248,113,113,.7)') },
+        { type:'line', label:'Cash balance', data: r.map(x=>x.cash), borderColor:'#4cc2ff', borderWidth:2.5, fill:false, tension:0.3, yAxisID:'y' },
+      ],
+    },
+    options: CHART_OPTS,
+  }), [sim]);
+  return html`<div style="height:420px"><canvas ref=${ref}></canvas></div>`;
+}
+
+function BorrowChart({ sim, globals }) {
+  const r = sim.yearRows;
+  const ref = useChart(() => ({
+    type: 'line',
+    data: {
+      labels: r.map(x=>x.year),
+      datasets: [
+        { label: 'Debt', data: r.map(x=>x.totalDebt), borderColor: '#f87171', backgroundColor: 'rgba(248,113,113,.15)', fill:true, tension:0.3 },
+        { label: 'DTI cap', data: r.map(x=>globals.dtiCap*householdGross(globals, x.year)), borderColor:'#fbbf24', borderDash:[6,4], pointRadius:0 },
+        { label: 'Remaining borrowing room', data: r.map(x=>x.borrowingRoom), borderColor:'#4ade80', backgroundColor: 'rgba(74,222,128,.1)', fill:true, tension:0.3 },
+      ],
+    },
+    options: CHART_OPTS,
+  }), [sim, globals]);
+  return html`<div style="height:420px"><canvas ref=${ref}></canvas></div>`;
+}
+
+function BucketChart({ sim, globals, investments }) {
+  const [hoverIndex, setHoverIndex] = useState(null);
+  const years = YEARS;
+  const bands = years.map(y => priceBandThresholdsForYear(y, globals));
+  const lower = bands.map(b => b.lower);
+  const upper = bands.map(b => b.upper);
+  const depositPct = (globals.depositPct ?? DEFAULT_GLOBALS.depositPct) / 100;
+  const stampPct = (globals.stampDutyPct ?? DEFAULT_GLOBALS.stampDutyPct) / 100;
+  const minCashBuffer = globals.minCashBuffer || 0;
+
+  function usableEquityForRow(row) {
+    const ppor = row.decisionPpor || { value: row.pporValue || 0, loan: row.pporLoan || 0 };
+    const ips = row.decisionIps || [];
+    const pporUsable = Math.max(0, 0.8 * (ppor.value || 0) - (ppor.loan || 0));
+    const ipUsable = ips.reduce((sum, p) => sum + Math.max(0, 0.8 * (p.value || 0) - (p.loan || 0)), 0);
+    return pporUsable + ipUsable;
+  }
+
+  function isFeasibleAtPrice(row, price, depositSource, subtype) {
+    if (!price || price <= 0) return true;
+    const deposit = price * depositPct;
+    const upfront = price * stampPct;
+    const baseLoan = price - deposit;
+    const equityDraw = depositSource === 'equity' ? deposit + upfront : 0;
+    const cashUsed = depositSource === 'cash' ? deposit + upfront : 0;
+    const totalNewDebt = baseLoan + equityDraw;
+
+    const decisionPpor = row.decisionPpor || { value: row.pporValue || 0, loan: row.pporLoan || 0 };
+    const decisionIps = row.decisionIps || [];
+    const usableCash = Math.max(0, (row.decisionCash ?? row.cash ?? 0) - minCashBuffer);
+    const usableEquity = usableEquityForRow(row);
+
+    if (depositSource === 'cash' && cashUsed > usableCash) return false;
+    if (depositSource === 'equity' && equityDraw > usableEquity) return false;
+
+    const prospective = {
+      price,
+      depositPct: (globals.depositPct ?? DEFAULT_GLOBALS.depositPct),
+      depositSource,
+      yieldPct: globals.propertyYieldPct,
+      subtype,
+    };
+    const cap = borrowingCapacity(globals, decisionIps, decisionPpor, prospective, row.year);
+    if (totalNewDebt > cap.dtiRoom) return false;
+    if (totalNewDebt > cap.servRoom) return false;
+    return true;
+  }
+
+  function isBankFeasibleAtPrice(row, price, depositSource, subtype) {
+    if (!price || price <= 0) return true;
+    const deposit = price * depositPct;
+    const upfront = price * stampPct;
+    const baseLoan = price - deposit;
+    const equityDraw = depositSource === 'equity' ? deposit + upfront : 0;
+    const totalNewDebt = baseLoan + equityDraw;
+    const decisionPpor = row.decisionPpor || { value: row.pporValue || 0, loan: row.pporLoan || 0 };
+    const decisionIps = row.decisionIps || [];
+    const prospective = {
+      price,
+      depositPct: (globals.depositPct ?? DEFAULT_GLOBALS.depositPct),
+      depositSource,
+      yieldPct: globals.propertyYieldPct,
+      subtype,
+    };
+    const cap = borrowingCapacity(globals, decisionIps, decisionPpor, prospective, row.year);
+    return totalNewDebt <= cap.dtiRoom && totalNewDebt <= cap.servRoom;
+  }
+
+  function bankConstraintAtPrice(row, price, depositSource, subtype) {
+    const deposit = price * depositPct;
+    const upfront = price * stampPct;
+    const baseLoan = price - deposit;
+    const equityDraw = depositSource === 'equity' ? deposit + upfront : 0;
+    const totalNewDebt = baseLoan + equityDraw;
+    const decisionPpor = row.decisionPpor || { value: row.pporValue || 0, loan: row.pporLoan || 0 };
+    const decisionIps = row.decisionIps || [];
+    const prospective = {
+      price,
+      depositPct: (globals.depositPct ?? DEFAULT_GLOBALS.depositPct),
+      depositSource,
+      yieldPct: globals.propertyYieldPct,
+      subtype,
+    };
+    const cap = borrowingCapacity(globals, decisionIps, decisionPpor, prospective, row.year);
+    const dtiRoom = cap.dtiRoom - totalNewDebt;
+    const servRoom = cap.servRoom - totalNewDebt;
+    return dtiRoom < servRoom
+      ? { key: 'dti', label: 'DTI cap', room: dtiRoom }
+      : { key: 'serviceability', label: 'serviceability', room: servRoom };
+  }
+
+  function fundingLimitForRow(row, depositSource) {
+    const fundingPct = Math.max(0.0001, depositPct + stampPct);
+    if (depositSource === 'equity') return usableEquityForRow(row) / fundingPct;
+    return Math.max(0, (row.decisionCash ?? row.cash ?? 0) - minCashBuffer) / fundingPct;
+  }
+
+  function feasibilityConstraint(row, price, depositSource, subtype) {
+    const deposit = price * depositPct;
+    const upfront = price * stampPct;
+    const baseLoan = price - deposit;
+    const equityDraw = depositSource === 'equity' ? deposit + upfront : 0;
+    const cashUsed = depositSource === 'cash' ? deposit + upfront : 0;
+    const totalNewDebt = baseLoan + equityDraw;
+
+    const decisionPpor = row.decisionPpor || { value: row.pporValue || 0, loan: row.pporLoan || 0 };
+    const decisionIps = row.decisionIps || [];
+    const usableCash = Math.max(0, (row.decisionCash ?? row.cash ?? 0) - minCashBuffer);
+    const usableEquity = usableEquityForRow(row);
+    const prospective = {
+      price,
+      depositPct: (globals.depositPct ?? DEFAULT_GLOBALS.depositPct),
+      depositSource,
+      yieldPct: globals.propertyYieldPct,
+      subtype,
+    };
+    const cap = borrowingCapacity(globals, decisionIps, decisionPpor, prospective, row.year);
+
+    const limits = [
+      depositSource === 'cash'
+        ? { key: 'cash', label: 'cash deposit/buffer', room: usableCash - cashUsed }
+        : { key: 'equity', label: 'usable equity', room: usableEquity - equityDraw },
+      { key: 'dti', label: 'DTI cap', room: cap.dtiRoom - totalNewDebt },
+      { key: 'serviceability', label: 'serviceability', room: cap.servRoom - totalNewDebt },
+    ];
+    return limits.reduce((tightest, limit) => limit.room < tightest.room ? limit : tightest, limits[0]);
+  }
+
+  function maxFeasiblePrice(row, depositSource, subtype) {
+    let lo = 0;
+    let upper = 600000;
+    while (isFeasibleAtPrice(row, upper, depositSource, subtype) && upper < 12000000) {
+      lo = upper;
+      upper *= 2;
+    }
+
+    if (lo === 0 && !isFeasibleAtPrice(row, upper, depositSource, subtype)) {
+      let left = 0;
+      let right = upper;
+      for (let i = 0; i < 24; i++) {
+        const mid = (left + right) / 2;
+        if (isFeasibleAtPrice(row, mid, depositSource, subtype)) left = mid;
+        else right = mid;
+      }
+      return Math.max(0, left);
+    }
+
+    let left = lo;
+    let right = upper;
+    for (let i = 0; i < 24; i++) {
+      const mid = (left + right) / 2;
+      if (isFeasibleAtPrice(row, mid, depositSource, subtype)) left = mid;
+      else right = mid;
+    }
+    return Math.max(0, left);
+  }
+
+  function maxBankFeasiblePrice(row, depositSource, subtype) {
+    let lo = 0;
+    let upper = 600000;
+    while (isBankFeasibleAtPrice(row, upper, depositSource, subtype) && upper < 12000000) {
+      lo = upper;
+      upper *= 2;
+    }
+
+    let left = lo;
+    let right = upper;
+    for (let i = 0; i < 24; i++) {
+      const mid = (left + right) / 2;
+      if (isBankFeasibleAtPrice(row, mid, depositSource, subtype)) left = mid;
+      else right = mid;
+    }
+    return Math.max(0, left);
+  }
+
+  const effectiveCapacityMeta = sim.yearRows.map(row => {
+    const options = [
+      { depositSource: 'cash', subtype: 'new' },
+      { depositSource: 'equity', subtype: 'new' },
+    ].map(opt => ({
+      ...opt,
+      bankMaxPrice: maxBankFeasiblePrice(row, opt.depositSource, opt.subtype),
+      fundingMaxPrice: fundingLimitForRow(row, opt.depositSource),
+    })).map(opt => ({
+      ...opt,
+      maxPrice: Math.min(opt.bankMaxPrice, opt.fundingMaxPrice),
+    }));
+
+    const best = options.reduce((a, b) => (b.maxPrice > a.maxPrice ? b : a), options[0] || { maxPrice: 0, depositSource: 'cash', subtype: 'established' });
+    const bankConstraint = bankConstraintAtPrice(row, Math.max(1, best.maxPrice || 0), best.depositSource, best.subtype);
+    const fundingConstraint = best.depositSource === 'equity'
+      ? { key: 'equity', label: 'usable equity' }
+      : { key: 'cash', label: 'cash deposit/buffer' };
+    const constraint = best.bankMaxPrice <= best.fundingMaxPrice ? bankConstraint : fundingConstraint;
+    return {
+      maxPrice: best.maxPrice || 0,
+      bankMaxPrice: best.bankMaxPrice || 0,
+      fundingMaxPrice: best.fundingMaxPrice || 0,
+      depositSource: best.depositSource,
+      subtype: best.subtype,
+      constraint: constraint?.label || 'unknown',
+      constraintKey: constraint?.key || 'unknown',
+      debtRoom: Math.max(0, row.borrowingRoom || 0),
+      usableCash: Math.max(0, (row.decisionCash ?? row.cash ?? 0) - minCashBuffer),
+      usableEquity: usableEquityForRow(row),
+    };
+  });
+  const effectiveCapacity = effectiveCapacityMeta.map(x => x.maxPrice);
+  const constraintColors = {
+    cash: '#60a5fa',
+    equity: '#a78bfa',
+    dti: '#fbbf24',
+    serviceability: '#f87171',
+    unknown: '#4ade80',
+  };
+  const effectiveCapacityPointColors = effectiveCapacityMeta.map(x => constraintColors[x.constraintKey] || constraintColors.unknown);
+  const planned = years.map(y => {
+    const prices = investments
+      .filter(inv => inv.type === 'property' && inv.year === y)
+      .map(inv => inv.price);
+    return prices.length ? Math.max(...prices) : null;
+  });
+  const maxSeries = Math.max(...upper, ...planned.filter(v => v != null), ...effectiveCapacity, 1000000) * 1.15;
+
+  const ref = useChart(() => ({
+    type: 'line',
+    data: {
+      labels: years,
+      datasets: [
+        {
+          label: '< lower band',
+          data: lower,
+          borderColor: '#f87171',
+          backgroundColor: 'rgba(248,113,113,.12)',
+          pointRadius: 0,
+          tension: 0.2,
+          fill: 'origin',
+        },
+        {
+          label: 'middle band upper',
+          data: upper,
+          borderColor: '#fbbf24',
+          backgroundColor: 'rgba(251,191,36,.14)',
+          pointRadius: 0,
+          tension: 0.2,
+          fill: '-1',
+        },
+        {
+          label: '> upper band',
+          data: years.map(() => maxSeries),
+          borderColor: 'rgba(0,0,0,0)',
+          backgroundColor: 'rgba(74,222,128,.10)',
+          pointRadius: 0,
+          fill: '-1',
+        },
+        {
+          label: 'Planned property price',
+          data: planned,
+          borderColor: '#4cc2ff',
+          backgroundColor: '#4cc2ff',
+          pointRadius: 4,
+          pointHoverRadius: 6,
+          showLine: false,
+          spanGaps: false,
+        },
+        {
+          label: 'Effective max new-build buy price',
+          data: effectiveCapacity,
+          borderColor: '#4ade80',
+          backgroundColor: 'rgba(74,222,128,.12)',
+          borderDash: [8, 4],
+          pointBackgroundColor: effectiveCapacityPointColors,
+          pointBorderColor: effectiveCapacityPointColors,
+          pointRadius: 3,
+          pointHoverRadius: 4,
+          tension: 0.25,
+          fill: false,
+        },
+      ],
+    },
+    options: {
+      ...CHART_OPTS,
+      onHover: (_event, elements) => {
+        if (!elements?.length) return;
+        const nextIndex = elements[0].index;
+        setHoverIndex(current => current === nextIndex ? current : nextIndex);
+      },
+      plugins: {
+        ...CHART_OPTS.plugins,
+        tooltip: {
+          callbacks: {
+            label: (ctx) => {
+              const year = years[ctx.dataIndex];
+              const band = bands[ctx.dataIndex];
+              if (ctx.dataset.label === '< lower band') return `Low bucket below ${fmt(band.lower)}`;
+              if (ctx.dataset.label === 'middle band upper') return `Middle bucket tops at ${fmt(band.upper)}`;
+              if (ctx.dataset.label === '> upper band') return `Premium bucket starts above ${fmt(band.upper)}`;
+              if (ctx.dataset.label === 'Planned property price') return `Planned buy in ${year}: ${fmt(ctx.parsed.y)}`;
+              if (ctx.dataset.label === 'Effective max new-build buy price') {
+                return `Effective max new-build buy: ${fmt(ctx.parsed.y)}`;
+              }
+              return `${ctx.dataset.label}: ${fmt(ctx.parsed.y)}`;
+            },
+          },
+        },
+      },
+      scales: {
+        ...CHART_OPTS.scales,
+        y: {
+          ...CHART_OPTS.scales.y,
+          suggestedMax: maxSeries,
+        },
+      },
+    },
+  }), [sim, globals, investments]);
+
+  const currentBands = priceBandThresholdsForYear(START_YEAR, globals);
+  const endBands = priceBandThresholdsForYear(END_YEAR, globals);
+  const detailIndex = hoverIndex ?? Math.min(Math.max(0, years.indexOf(2035)), years.length - 1);
+  const detail = effectiveCapacityMeta[detailIndex];
+  const detailYear = years[detailIndex];
+  const constraintColor = constraintColors[detail?.constraintKey] || constraintColors.unknown;
+
+  return html`
+    <div style="height:420px"><canvas ref=${ref}></canvas></div>
+    <div class="stat" style="margin-top:10px;border-left:3px solid ${constraintColor}">
+      <div class="l">Selected year capacity ${hoverIndex == null ? '(hover graph to change)' : ''}</div>
+      <div style="display:grid;grid-template-columns:1.15fr 1fr 1fr 1fr;gap:10px;align-items:start;margin-top:6px">
+        <div>
+          <div class="muted">${detailYear} effective max new build</div>
+          <div class="v" style="color:var(--good)">${fmt(detail?.maxPrice || 0)}</div>
+          <div class="muted">${detail?.depositSource || 'cash'} funding · constrained by <strong style="color:${constraintColor}">${detail?.constraint || 'unknown'}</strong></div>
+        </div>
+        <div>
+          <div class="muted">Bank max</div>
+          <strong>${fmt(detail?.bankMaxPrice || 0)}</strong>
+        </div>
+        <div>
+          <div class="muted">Funding max</div>
+          <strong>${fmt(detail?.fundingMaxPrice || 0)}</strong>
+        </div>
+        <div>
+          <div class="muted">Available inputs</div>
+          <div>Cash ${fmt(detail?.usableCash || 0)}</div>
+          <div>Equity ${fmt(detail?.usableEquity || 0)}</div>
+        </div>
+      </div>
+    </div>
+    <div class="muted" style="margin-top:8px">
+      ${START_YEAR} middle bucket: ${fmt(currentBands.lower)} to ${fmt(currentBands.upper)} ·
+      ${END_YEAR} middle bucket: ${fmt(endBands.lower)} to ${fmt(endBands.upper)} ·
+      green line is min(bank max, funding max) for new builds; point colour marks the binding constraint (red serviceability, yellow DTI, blue cash, purple equity)
+    </div>
+  `;
+}
+
+function YearTable({ sim }) {
+  return html`
+    <div class="scroll">
+      <table>
+        <thead>
+          <tr><th>Year</th><th>Surplus</th><th>Cash</th><th>Stocks</th><th>IPs</th><th>IP val</th><th>IP CF</th><th>Debt</th><th>Net worth</th><th>Borrow room</th></tr>
+        </thead>
+        <tbody>
+          ${sim.yearRows.map(r => html`
+            <tr class=${r.cash<0 ? 'bad' : (r.warnings.length ? 'warn' : '')}>
+              <td>${r.year}</td>
+              <td>${fmt(r.surplus)}</td>
+              <td style=${r.cash<0?'color:var(--bad)':''}>${fmt(r.cash)}</td>
+              <td>${fmt(r.stocks)}</td>
+              <td>${r.ipCount}</td>
+              <td>${fmt(r.ipValue)}</td>
+              <td style=${r.ipCashflow<0?'color:var(--bad)':'color:var(--good)'}>${fmt(r.ipCashflow)}</td>
+              <td>${fmt(r.totalDebt)}</td>
+              <td style="color:var(--good)">${fmt(r.netWorth)}</td>
+              <td>${fmt(r.borrowingRoom)}</td>
+            </tr>
+          `)}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
+function WarningsList({ sim }) {
+  const items = sim.yearRows.flatMap(r => r.warnings.map(w => ({year:r.year, w})));
+  if (!items.length) return html`<div class="muted">No constraint breaches. Scenario is feasible. ✓</div>`;
+  return html`<div class="scroll">${items.map(x => html`
+    <div style="padding:6px 8px;border-left:3px solid var(--warn);margin-bottom:6px;background:rgba(251,191,36,0.06);">
+      <strong>${x.year}</strong>: ${x.w}
+    </div>`)}</div>`;
+}
+
+function startingTimelineSnapshot() {
+  const ipValue = INITIAL_STATE.investmentProperties.reduce((sum, property) => sum + (property.price || property.value || 0), 0);
+  const ipLoan = INITIAL_STATE.investmentProperties.reduce((sum, property) => sum + (property.loan || 0), 0);
+  const pporEquity = INITIAL_STATE.ppor.value - INITIAL_STATE.ppor.loan;
+  const ipEquity = ipValue - ipLoan;
+  const usablePporEquity = Math.max(0, 0.8 * INITIAL_STATE.ppor.value - INITIAL_STATE.ppor.loan);
+  const usableIpEquity = INITIAL_STATE.investmentProperties.reduce((sum, property) => {
+    const value = property.price || property.value || 0;
+    return sum + Math.max(0, 0.8 * value - (property.loan || 0));
+  }, 0);
+  const totalDebt = INITIAL_STATE.ppor.loan + ipLoan;
+  return {
+    cash: INITIAL_STATE.cash,
+    stocks: INITIAL_STATE.stocks,
+    pporValue: INITIAL_STATE.ppor.value,
+    pporLoan: INITIAL_STATE.ppor.loan,
+    pporEquity,
+    ipValue,
+    ipLoan,
+    ipEquity,
+    totalDebt,
+    netWorth: INITIAL_STATE.cash + INITIAL_STATE.stocks + pporEquity + ipEquity,
+    usableEquity: usablePporEquity + usableIpEquity,
+  };
+}
+
+function Metric({ label, value, tone }) {
+  const color = tone === 'good' ? 'var(--good)' : tone === 'bad' ? 'var(--bad)' : tone === 'warn' ? 'var(--warn)' : 'var(--text)';
+  return html`
+    <div class="metric">
+      <div class="label">${label}</div>
+      <div class="value" style="color:${color}">${fmt(value)}</div>
+    </div>
+  `;
+}
+
+function TimelineMetrics({ snapshot, mode = 'portfolio' }) {
+  if (!snapshot) return null;
+  const propertyValue = (snapshot.pporValue || 0) + (snapshot.ipValue || 0);
+  const propertyEquity = (snapshot.pporEquity || 0) + (snapshot.ipEquity || 0);
+  const items = mode === 'start'
+    ? [
+      ['Cash', snapshot.cash],
+      ['Stocks', snapshot.stocks],
+      ['Property value', propertyValue],
+      ['Property equity', propertyEquity],
+      ['Usable equity', snapshot.usableEquity],
+      ['Debt', snapshot.totalDebt, 'bad'],
+      ['Net worth', snapshot.netWorth, 'good'],
+      ['IP value', snapshot.ipValue],
+    ]
+    : [
+      ['Cash', snapshot.cash],
+      ['Usable equity', snapshot.usableEquity],
+      ['Net worth', snapshot.netWorth, 'good'],
+      ['Debt', snapshot.totalDebt, 'bad'],
+    ];
+  return html`<div class="metric-grid">${items.map(([label, value, tone]) => html`<${Metric} label=${label} value=${value} tone=${tone} />`)}</div>`;
+}
+
+function TimelineInvestmentFunding({ step }) {
+  if (step.type === 'property') {
+    return html`
+      <div class="timeline-investment">
+        <${Metric} label="Price" value=${step.investment?.price || 0} />
+        <${Metric} label="Bank loan" value=${step.funding?.baseLoan || 0} />
+        <${Metric} label="Deposit" value=${step.funding?.deposit || 0} />
+        <${Metric} label="Stamp/costs" value=${step.funding?.upfront || 0} />
+        <${Metric} label="Cash needed" value=${step.funding?.cashUsed || 0} tone=${step.funding?.cashUsed ? 'warn' : ''} />
+        <${Metric} label="Equity draw" value=${step.funding?.equityDraw || 0} tone=${step.funding?.equityDraw ? 'warn' : ''} />
+        <${Metric} label="New assessed debt" value=${step.funding?.totalNewDebt || 0} tone="bad" />
+        <${Metric} label="Total upfront" value=${step.funding?.totalRequired || 0} />
+      </div>
+    `;
+  }
+
+  return html`
+    <div class="timeline-investment">
+      <${Metric} label="Stock amount" value=${step.investment?.amount || 0} />
+      <${Metric} label="Cash needed" value=${step.funding?.cashUsed || 0} tone=${step.funding?.cashUsed ? 'warn' : ''} />
+      <${Metric} label="Equity draw" value=${step.funding?.equityDraw || 0} tone=${step.funding?.equityDraw ? 'warn' : ''} />
+      <${Metric} label="Total funded" value=${step.funding?.totalRequired || 0} />
+    </div>
+  `;
+}
+
+function InvestmentTimeline({ sim }) {
+  const steps = sim.yearRows.flatMap(row => row.investmentSteps || []);
+  const start = startingTimelineSnapshot();
+  return html`
+    <div class="timeline">
+      <div class="timeline-item start">
+        <div class="timeline-head">
+          <div>
+            <div class="timeline-title">Starting position</div>
+            <div class="muted">Before the scenario begins</div>
+          </div>
+        </div>
+        <${TimelineMetrics} snapshot=${start} mode="start" />
+      </div>
+
+      ${steps.length === 0 && html`<div class="muted">No planned investments yet. Add one to see before and after funding states.</div>`}
+
+      ${steps.map(step => html`
+        <div class="timeline-item ${step.type}">
+          <div class="timeline-head">
+            <div>
+              <div class="timeline-title">${step.year} · ${step.name}</div>
+              <div class="muted">${step.type === 'property' ? `${step.subtype || 'property'} property` : 'stock / ETF purchase'}${step.skipped ? ' · skipped in strict mode' : ''}</div>
+            </div>
+            <span class="pill ${step.type}">${step.type === 'property' ? 'PROPERTY' : 'STOCK'}</span>
+          </div>
+
+          <div class="timeline-section">
+            <div class="timeline-section-title">Before investment</div>
+            <${TimelineMetrics} snapshot=${step.before} />
+          </div>
+
+          <div class="timeline-section">
+            <div class="timeline-section-title">Investment funding required</div>
+            <${TimelineInvestmentFunding} step=${step} />
+          </div>
+
+          <div class="timeline-section">
+            <div class="timeline-section-title">After investment</div>
+            <${TimelineMetrics} snapshot=${step.after} />
+          </div>
+
+          ${step.warnings?.length ? html`
+            <div class="timeline-section">
+              <div class="timeline-section-title">Warnings for this investment</div>
+              ${step.warnings.map(warning => html`<div class="muted" style="color:var(--warn)">${warning}</div>`)}
+            </div>
+          ` : null}
+        </div>
+      `)}
+    </div>
+  `;
+}
+
+function RightPanel({ investments, addInvestment, updateInvestment, removeInvestment, globals, sim }) {
+  const [form, setForm] = useState({
+    type: 'property', subtype: 'new', depositSource: 'cash', cashFundingPct: 100,
+    name: '', year: 2027, price: 700000,
+    depositPct: 20, yieldPct: 4.0, growthMode: 'auto', growthPct: 4.0, interestPct: globals.interestRatePct ?? 6.3,
+    ...phasedDefaults(),
+    amount: 50000,
+  });
+
+  const setF = (k, v) => setForm({ ...form, [k]: v });
+
+  const submit = () => {
+    if (form.type === 'property') {
+      addInvestment({
+        type: 'property',
+        subtype: form.subtype,
+        depositSource: form.depositSource,
+        cashFundingPct: fundingCashPct(form),
+        name: form.name || `IP ${form.subtype === 'new' ? 'new-build' : 'established'} ${form.year}`,
+        year: +form.year, price: +form.price,
+        depositPct: +form.depositPct, yieldPct: +form.yieldPct,
+        ...buildGrowthPayload(form), interestPct: +form.interestPct,
+      });
+    } else {
+      addInvestment({
+        type: 'stock',
+        name: form.name || `Stock buy ${form.year}`,
+        year: +form.year, amount: +form.amount,
+        depositSource: form.depositSource,
+        cashFundingPct: fundingCashPct(form),
+      });
+    }
+  };
+
+  return html`
+    <div>
+      <div class="panel">
+        <h2>Add investment</h2>
+        <label>Type</label>
+        <select value=${form.type} onChange=${e=>setF('type', e.target.value)}>
+          <option value="property">Investment property</option>
+          <option value="stock">Stock / ETF purchase</option>
+        </select>
+        ${form.type === 'property' && html`
+          <label>Property subtype</label>
+          <select value=${form.subtype} onChange=${e=>setF('subtype', e.target.value)}>
+            <option value="established">Established (no neg gearing post-policy)</option>
+            <option value="new">New build (neg gearing allowed)</option>
+          </select>
+          <${FundingEditor} value=${form} setValue=${setF} />
+        `}
+        ${form.type === 'stock' && html`<${FundingEditor} value=${form} setValue=${setF} />`}
+        <label>Name</label>
+        <input type="text" value=${form.name} placeholder=${form.type==='property'?'e.g. Beveridge H&L':'e.g. VAS top-up'}
+          onInput=${e=>setF('name', e.target.value)} />
+        <label>Year</label>
+        <select value=${form.year} onChange=${e=>setF('year', +e.target.value)}>
+          ${YEARS.map(y => html`<option value=${y}>${y}</option>`)}
+        </select>
+        ${form.type === 'property' ? html`
+          <div class="row">
+            <${NumField} label="Price" value=${form.price} step=${10000} onChange=${v=>setF('price',v)} />
+            <${NumField} label="Deposit %" value=${form.depositPct} step=${1} onChange=${v=>setF('depositPct',v)} />
+          </div>
+          <${PropertyFundingBreakdown} investment=${form} globals=${globals} />
+          <div class="row">
+            <${NumField} label="Yield %" value=${form.yieldPct} step=${0.1} onChange=${v=>setF('yieldPct',v)} />
+            <${NumField} label="Interest rate %" value=${form.interestPct} step=${0.1} onChange=${v=>setF('interestPct',v)} />
+          </div>
+          <${GrowthEditor} value=${form} setValue=${setF} subtype=${form.subtype} price=${form.price} year=${form.year} globals=${globals} />
+        ` : html`
+          <${NumField} label="Amount" value=${form.amount} step=${1000} onChange=${v=>setF('amount',v)} />
+        `}
+        <div style="margin-top:12px"><button onClick=${submit}>+ Add to plan</button></div>
+      </div>
+
+      <div class="panel">
+        <h2>Plan (${investments.length})</h2>
+        <div class="scroll">
+          ${[...investments].sort((a,b)=>a.year-b.year).map(inv => html`
+            <div class="investment ${inv.type}">
+              <div class="hdr">
+                <div>
+                  <span class="pill ${inv.type}">${inv.type==='property'?(inv.subtype==='new'?'PROP-NEW':'PROP-EST'):'STOCK'}</span>
+                  <strong style="margin-left:6px">${inv.name}</strong>
+                </div>
+                <button class="danger" onClick=${()=>removeInvestment(inv.id)}>✕</button>
+              </div>
+              <div class="grid">
+                <div>Year: <strong style="color:var(--text)">${inv.year}</strong></div>
+                ${inv.type==='property' ? html`
+                  <div>Price: <strong style="color:var(--text)">${fmt(inv.price)}</strong></div>
+                  <div>Deposit: ${inv.depositPct}% (${fundingLabel(inv)})</div>
+                  <div>Yield: ${inv.yieldPct}%</div>
+                  <div>Growth: ${growthSummaryForInvestment(inv, globals)}</div>
+                  <div>Rate: ${inv.interestPct}%</div>
+                ` : html`
+                  <div>Amount: <strong style="color:var(--text)">${fmt(inv.amount)}</strong></div>
+                  <div>Funding: ${fundingLabel(inv)}</div>
+                `}
+              </div>
+              ${inv.type==='property' && html`<${PropertyFundingBreakdown} investment=${inv} globals=${globals} compact=${true} />`}
+              ${inv.type==='property' && html`<${FeasibilityBadge} inv=${inv} sim=${sim} globals=${globals} />`}
+              <details style="margin-top:6px">
+                <summary class="muted">Edit</summary>
+                <div style="margin-top:6px">
+                  <label>Year</label>
+                  <select value=${inv.year} onChange=${e=>updateInvestment(inv.id, { year:+e.target.value })}>
+                    ${YEARS.map(y => html`<option value=${y}>${y}</option>`)}
+                  </select>
+                  ${inv.type==='property' ? html`
+                    <div class="row">
+                      <div>
+                        <label>Subtype</label>
+                        <select value=${inv.subtype || 'established'} onChange=${e=>updateInvestment(inv.id,{subtype:e.target.value})}>
+                          <option value="established">Established</option>
+                          <option value="new">New build</option>
+                        </select>
+                      </div>
+                      <div>
+                        <${FundingEditor} value=${inv} setValue=${(k, v) => updateInvestment(inv.id, { [k]: v })} />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <${NumField} label="Price" value=${inv.price} step=${10000} onChange=${v=>updateInvestment(inv.id,{price:v})} />
+                      <${NumField} label="Deposit %" value=${inv.depositPct} step=${1} onChange=${v=>updateInvestment(inv.id,{depositPct:v})} />
+                    </div>
+                    <${PropertyFundingBreakdown} investment=${inv} globals=${globals} />
+                    <div class="row">
+                      <${NumField} label="Yield %" value=${inv.yieldPct} step=${0.1} onChange=${v=>updateInvestment(inv.id,{yieldPct:v})} />
+                      <${NumField} label="Interest %" value=${inv.interestPct} step=${0.1} onChange=${v=>updateInvestment(inv.id,{interestPct:v})} />
+                    </div>
+                    <${GrowthEditor}
+                      value=${{ ...phasedDefaults(inv.growthSchedule), ...inv, growthMode: investmentGrowthMode(inv) }}
+                      setValue=${(k, v) => {
+                        const current = { ...phasedDefaults(inv.growthSchedule), ...inv, growthMode: investmentGrowthMode(inv), [k]: v };
+                        updateInvestment(inv.id, buildGrowthPayload(current));
+                      }}
+                      subtype=${inv.subtype || 'established'}
+                      price=${inv.price}
+                      year=${inv.year}
+                      globals=${globals} />
+                  ` : html`
+                    <${NumField} label="Amount" value=${inv.amount} step=${1000} onChange=${v=>updateInvestment(inv.id,{amount:v})} />
+                    <${FundingEditor} value=${inv} setValue=${(k, v) => updateInvestment(inv.id, { [k]: v })} />
+                  `}
+                </div>
+              </details>
+            </div>
+          `)}
+          ${investments.length === 0 && html`<div class="muted">No planned investments. Add one above.</div>`}
+        </div>
+      </div>
+
+      <div class="panel">
+        <h2>Surplus by year</h2>
+        <div class="scroll" style="max-height:240px">
+          <table>
+            <thead><tr><th>Year</th><th>Salary surplus</th></tr></thead>
+            <tbody>
+              ${sim.yearRows.map(r => html`<tr><td>${r.year}</td><td>${fmt(r.surplus)}</td></tr>`)}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function FeasibilityBadge({ inv, sim, globals }) {
+  // Look at sim row for this property's year
+  const row = sim.yearRows.find(r => r.year === inv.year);
+  if (!row) return null;
+  // Warnings that mention this inv name
+  const myWarnings = row.warnings.filter(w => w.includes(inv.name));
+  if (myWarnings.length === 0) {
+    return html`<div style="margin-top:6px"><span class="badge ok">Feasible</span></div>`;
+  }
+  return html`<div style="margin-top:6px">${myWarnings.map(w => html`<span class="badge bad" title=${w}>${w.split(':')[0]}</span> `)}</div>`;
+}
+
+render(html`<${App} />`, document.getElementById('app'));
+</script>
+</body>
+</html>
