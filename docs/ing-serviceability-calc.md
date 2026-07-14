@@ -31,7 +31,7 @@ Proposed loan 1
 Property value(s)
 $
 650,000
-Loan amount 
+Loan amount
 $
 520,000
 Transaction type
@@ -44,14 +44,14 @@ Loan purpose
 Loan type
 
 Mortgage Simplifier Investor
-Interest rate 
+Interest rate
 6.19
 6.19%
 p.a.
 %
 Loan term
 30 years
-Repayment type 
+Repayment type
 
 
  
@@ -148,15 +148,15 @@ Applicant 2
 Business income
 Living expenses
 Applicant 1 & 2
-Dependants 
+Dependants
 
 No dependants
 Future residential postcode
 2762
-Enter the expenses as 
+Enter the expenses as
 
 
- 	Amount	Monthly amount
+Amount	Monthly amount
 Mandatory living expenses
 $
 0
