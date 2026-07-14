@@ -1,5 +1,5 @@
 // Pure simulation engine — no DOM dependencies.
-// Importable in both the browser (via <script type="module">) and Node (`node tests.js`).
+// Importable in both the browser (via <script type="module">) and Node (`npm test`).
 
 // ---------- CONSTANTS ----------
 export const START_YEAR = 2026;
@@ -28,7 +28,9 @@ export const DEFAULT_GLOBALS = {
   grossIncome: 200000,          // primary earner pre-tax
   partnerGrossIncome: 67000,    // partner pre-tax (set to 0 for single)
   incomeGrowthPct: 2.5,         // annual wage/income uplift used for future borrowing capacity
-  marginalTaxRate: 0.39,        // MTR of whoever owns the IPs (used for neg-gearing benefit)
+  marginalTaxRate: 0.47,        // legacy fallback for old scenarios without ownership details
+  primaryMarginalTaxRate: 0.47,
+  partnerMarginalTaxRate: 0.30,
   currentYearSurplusFraction: 7/12, // only the remaining share of 2026 surplus is available from late May
   // Legacy single drift retained for backward compatibility with old shared links.
   categoryPriceBandDriftPct: 4.0,
@@ -40,22 +42,30 @@ export const DEFAULT_GLOBALS = {
   stockDividendTaxRatePct: 17.0, // top marginal 47% less 30% franking credit assumption
   propertyGrowthPct: 4.0,
   propertyYieldPct: 4.0,
-  rentGrowthPct: 3.0,
+  rentGrowthPct: 4.5,
   interestRatePct: 6.3,
   nonInterestCostPct: 1.2,
   principalRepayPct: 1.5,
   stressBufferPct: 3.0,
   rentShadingPct: 80,
-  livingExpensesAnnual: 60000,  // HEM for a couple
-  minCashBuffer: 0,             // cash reserve that cannot be used for new purchases
+  livingExpensesAnnual: 64423,  // ING HEM-style living expense floor from the current calculator
+  serviceabilityLoanTermYears: 30,
+  includeNegativeGearingInServiceability: false,
+  creditCardLimit: 25000,
+  creditCardAssessmentRatePct: 3.8, // monthly repayment % of combined card limits
+  hecsAnnual: 1695,
+  serviceabilityBufferAnnual: 0,
+  minCashBuffer: 88000,         // cash reserve that cannot be used for new purchases
   dtiCap: 6.0,
   depositPct: 20,
   stampDutyPct: 5.5,
+  propertyValuationFreezeYears: 1,
   ppor: {
     growthPct: 4.0,
     principalRepayPct: 3.0, // legacy fallback for old scenarios without repayment details
     loanRatePct: 5.95,
     repaymentMonthly: 4499,
+    assessedRepaymentMonthly: 6883,
     remainingTermYears: 28,
     useCashAsOffset: true,
   },
@@ -142,14 +152,57 @@ export function defaultGrowthScheduleForProperty(subtype, price, year = START_YE
   // Auto categories are determined from the purchase-time price/asset profile and then held constant.
   // A property that qualifies for a stronger growth bucket today keeps that bucket as it appreciates.
   if (subtype === 'new') {
-    if (price < bands.lower) return [growthSchedulePhase(5, 0.0), growthSchedulePhase(5, 0.0), growthSchedulePhase(null, 0.0)];
-    if (price <= bands.upper) return [growthSchedulePhase(5, 2.0), growthSchedulePhase(5, 4.0), growthSchedulePhase(null, 5.0)];
-    return [growthSchedulePhase(5, 5.0), growthSchedulePhase(5, 5.0), growthSchedulePhase(null, 5.0)];
+    if (price < bands.lower) return [growthSchedulePhase(null, 2.0)];
+    if (price <= bands.upper) return [growthSchedulePhase(5, 3.0), growthSchedulePhase(5, 4.25), growthSchedulePhase(null, 4.75)];
+    return [growthSchedulePhase(5, 3.75), growthSchedulePhase(5, 4.75), growthSchedulePhase(null, 5.25)];
   }
 
-  if (price < bands.lower) return [growthSchedulePhase(5, 1.0), growthSchedulePhase(5, 2.0), growthSchedulePhase(null, 3.0)];
-  if (price <= bands.upper) return [growthSchedulePhase(5, 3.0), growthSchedulePhase(5, 4.0), growthSchedulePhase(null, 4.5)];
-  return [growthSchedulePhase(5, 4.0), growthSchedulePhase(5, 4.5), growthSchedulePhase(null, 4.5)];
+  if (price < bands.lower) return [growthSchedulePhase(null, 3.5)];
+  if (price <= bands.upper) return [growthSchedulePhase(5, 4.25), growthSchedulePhase(5, 4.75), growthSchedulePhase(null, 5.0)];
+  return [growthSchedulePhase(5, 4.75), growthSchedulePhase(5, 5.0), growthSchedulePhase(null, 5.25)];
+}
+
+export function ownershipPrimaryPct(investment) {
+  if (investment?.primaryOwnershipPct != null) return Math.max(0, Math.min(100, Number(investment.primaryOwnershipPct)));
+  if (investment?.owner === 'partner') return 0;
+  if (investment?.owner === 'joint') return 50;
+  return 100;
+}
+
+export function investmentTaxRate(investment, globals = DEFAULT_GLOBALS) {
+  const primaryRate = globals.primaryMarginalTaxRate ?? globals.marginalTaxRate ?? 0;
+  const partnerRate = globals.partnerMarginalTaxRate ?? globals.marginalTaxRate ?? 0;
+  const primaryShare = ownershipPrimaryPct(investment) / 100;
+  return primaryShare * primaryRate + (1 - primaryShare) * partnerRate;
+}
+
+function scaleDeductibleDebtLots(lots, maxTotal) {
+  const total = lots.reduce((sum, lot) => sum + lot.amount, 0);
+  if (total <= 0 || total <= maxTotal) return lots.filter(lot => lot.amount > 0);
+  const scale = Math.max(0, maxTotal) / total;
+  return lots.map(lot => ({ ...lot, amount: lot.amount * scale })).filter(lot => lot.amount > 0);
+}
+
+function deductibleDebtTaxBenefit(lots, loanRate, deductibleInterestBase) {
+  const total = lots.reduce((sum, lot) => sum + lot.amount, 0);
+  if (total <= 0 || deductibleInterestBase <= 0) return 0;
+  return lots.reduce((sum, lot) => {
+    const interest = deductibleInterestBase * (lot.amount / total) * loanRate;
+    return sum + interest * lot.taxRate;
+  }, 0);
+}
+
+function addDeductibleDebtLot(lots, amount, investment, globals) {
+  if (!amount || amount <= 0) return lots;
+  return [...lots, { amount, taxRate: investmentTaxRate(investment, globals) }];
+}
+
+export function defaultRentGrowthScheduleForProperty(subtype, globals = DEFAULT_GLOBALS) {
+  const averageRentGrowth = globals.rentGrowthPct ?? 4.5;
+  if (subtype === 'new') {
+    return [growthSchedulePhase(2, Math.max(0, averageRentGrowth - 1.5)), growthSchedulePhase(3, Math.max(0, averageRentGrowth - 0.5)), growthSchedulePhase(null, averageRentGrowth)];
+  }
+  return [growthSchedulePhase(null, averageRentGrowth)];
 }
 
 export function normalizeGrowthSchedule(schedule, fallbackPct = null) {
@@ -191,8 +244,25 @@ export function propertyGrowthSchedule(property, globals) {
 }
 
 export function propertyGrowthPctForYear(property, globals, year) {
+  const heldYears = year - property.year;
+  const freezeYears = globals.propertyValuationFreezeYears || 0;
+  if (heldYears > 0 && heldYears <= freezeYears) return 0;
   const schedule = propertyGrowthSchedule(property, globals);
-  return growthPctForHeldYears(schedule, year - property.year);
+  return growthPctForHeldYears(schedule, Math.max(0, heldYears - freezeYears));
+}
+
+export function rentGrowthSchedule(property, globals) {
+  if (property?.rentGrowthSchedule?.length) return normalizeGrowthSchedule(property.rentGrowthSchedule, globals.rentGrowthPct);
+  if (property?.rentGrowthPct != null) return normalizeGrowthSchedule(null, property.rentGrowthPct);
+  return defaultRentGrowthScheduleForProperty(property?.subtype || 'established', globals);
+}
+
+export function rentGrowthPctForYear(property, globals, year) {
+  return growthPctForHeldYears(rentGrowthSchedule(property, globals), year - property.year);
+}
+
+export function annualRentForProperty(property, globals) {
+  return property.annualRent ?? ((property.price ?? property.value ?? 0) * ((property.yieldPct ?? globals.propertyYieldPct) / 100));
 }
 
 export function growthScheduleSummary(schedule) {
@@ -221,6 +291,26 @@ export function pporPrincipalRepaymentForYear(globals, ppor, cashOffset = 0) {
   return (ppor.originalLoan || ppor.loan || 0) * ((cfg.principalRepayPct || 0) / 100);
 }
 
+export function usablePporEquityForYear(ppor, globals = DEFAULT_GLOBALS, year = START_YEAR) {
+  const inFreeze = (year - START_YEAR) < (globals.propertyValuationFreezeYears || 0);
+  const assessedValue = inFreeze ? INITIAL_STATE.ppor.value : (ppor?.value || 0);
+  const assessedLoan = inFreeze ? Math.max(ppor?.loan || 0, INITIAL_STATE.ppor.loan) : (ppor?.loan || 0);
+  return Math.max(0, 0.8 * assessedValue - assessedLoan);
+}
+
+export function usableIpEquityForYear(properties, year, globals = DEFAULT_GLOBALS) {
+  return properties
+    .filter(property => year >= property.year)
+    .reduce((sum, property) => sum + Math.max(0, 0.8 * property.value - property.loan), 0);
+}
+
+function annualRepaymentFactor(rate, years) {
+  if (rate <= 0) return years > 0 ? 1 / years : 1;
+  const payments = Math.max(1, years * 12);
+  const monthlyRate = rate / 12;
+  return (monthlyRate * Math.pow(1 + monthlyRate, payments)) / (Math.pow(1 + monthlyRate, payments) - 1) * 12;
+}
+
 // Lender-style NSR serviceability:
 //   surplus = netIncome + shadedRent + negGearingAddBack − HEM − stressedPayments
 //   must be ≥ 0. Solve for the new loan that drives surplus to 0.
@@ -246,29 +336,44 @@ export function borrowingCapacity(g, existingIps, ppor, prospective = null, year
   const holdingRate = g.nonInterestCostPct / 100;
   const interestRate = g.interestRatePct / 100;
 
-  const existingRent = existingIps.reduce((s,p)=>s+p.value*((p.yieldPct??g.propertyYieldPct)/100),0);
+  const existingRent = existingIps.reduce((s,p)=>s + annualRentForProperty(p, g),0);
   const prospectiveRent = prospective ? prospective.price * (prospective.yieldPct/100) : 0;
+  const existingRentalExpenses = existingIps.reduce((s,p)=>s + (p.value || p.price || 0) * holdingRate, 0);
+  const prospectiveRentalExpenses = prospective ? prospective.price * holdingRate : 0;
   const shadedRent = (g.rentShadingPct/100) * (existingRent + prospectiveRent);
+  const assessedRentalExpenses = existingRentalExpenses + prospectiveRentalExpenses;
+  const netRentalIncome = shadedRent - assessedRentalExpenses;
 
-  // Negative-gearing tax add-back: only for new builds and grandfathered properties.
+  // Optional negative-gearing tax add-back. Default is off because the ING calculator example
+  // anchors current capacity without relying on negative gearing relief.
   let negGearAddBack = 0;
-  for (const p of existingIps) {
-    const negGearAllowed = (p.subtype === 'new') || p.grandfathered;
-    if (!negGearAllowed) continue;
-    const rent = p.value * ((p.yieldPct??g.propertyYieldPct)/100);
-    const loss = p.loan*interestRate + p.value*holdingRate - rent;
-    if (loss > 0) negGearAddBack += loss * g.marginalTaxRate;
-  }
-  if (prospective && prospective.subtype === 'new') {
-    const loss = prospLoan*interestRate + prospective.price*holdingRate - prospectiveRent;
-    if (loss > 0) negGearAddBack += loss * g.marginalTaxRate;
+  if (g.includeNegativeGearingInServiceability) {
+    for (const p of existingIps) {
+      const negGearAllowed = (p.subtype === 'new') || p.grandfathered;
+      if (!negGearAllowed) continue;
+      const rent = annualRentForProperty(p, g);
+      const loss = p.loan*interestRate + p.value*holdingRate - rent;
+      if (loss > 0) negGearAddBack += loss * investmentTaxRate(p, g);
+    }
+    if (prospective && prospective.subtype === 'new') {
+      const loss = prospLoan*interestRate + prospective.price*holdingRate - prospectiveRent;
+      if (loss > 0) negGearAddBack += loss * investmentTaxRate(prospective, g);
+    }
   }
 
-  const stressedExisting = pporDebt * pporStressRate + totalIpLoan * stressRate;
-  const availableForNewDebt = netIncome + shadedRent + negGearAddBack - g.livingExpensesAnnual - stressedExisting;
-  const servRoom = Math.max(0, availableForNewDebt / stressRate);
+  const loanTermYears = g.serviceabilityLoanTermYears || 30;
+  const newDebtRepaymentFactor = annualRepaymentFactor(stressRate, loanTermYears);
+  const pporRepaymentFactor = g.ppor?.assessedRepaymentMonthly
+    ? (g.ppor.assessedRepaymentMonthly * 12) / INITIAL_STATE.ppor.loan
+    : annualRepaymentFactor(pporStressRate, g.ppor?.remainingTermYears || loanTermYears);
+  const existingDebtRepaymentFactor = annualRepaymentFactor(stressRate, loanTermYears);
+  const stressedExisting = pporDebt * pporRepaymentFactor + totalIpLoan * existingDebtRepaymentFactor;
+  const creditCardCommitment = (g.creditCardLimit || 0) * ((g.creditCardAssessmentRatePct || 0) / 100) * 12;
+  const otherCommitments = creditCardCommitment + (g.hecsAnnual || 0) + (g.serviceabilityBufferAnnual || 0);
+  const availableForNewDebt = netIncome + netRentalIncome + negGearAddBack - g.livingExpensesAnnual - otherCommitments - stressedExisting;
+  const servRoom = Math.max(0, availableForNewDebt / newDebtRepaymentFactor);
 
-  return { dtiRoom, servRoom, grossIncome, netIncome, shadedRent, negGearAddBack, stressedExisting, hem: g.livingExpensesAnnual };
+  return { dtiRoom, servRoom, grossIncome, netIncome, shadedRent, assessedRentalExpenses, netRentalIncome, negGearAddBack, stressedExisting, creditCardCommitment, otherCommitments, hem: g.livingExpensesAnnual };
 }
 
 // ---------- SIMULATION ----------
@@ -278,7 +383,7 @@ export function simulate(globals, investments, opts = {}) {
   let cash = INITIAL_STATE.cash;
   let stockBalance = INITIAL_STATE.stocks;
   let ppor = { value: INITIAL_STATE.ppor.value, loan: INITIAL_STATE.ppor.loan, originalLoan: INITIAL_STATE.ppor.loan };
-  let deductiblePporDebt = 0;
+  let deductiblePporDebtLots = [];
 
   const ips = INITIAL_STATE.investmentProperties.map(p => ({
     ...p, value: p.price, originalLoan: p.loan, carriedLoss: 0,
@@ -295,8 +400,8 @@ export function simulate(globals, investments, opts = {}) {
     const ipLoan = activeIps.reduce((sum, property) => sum + property.loan, 0);
     const ipEquity = ipValue - ipLoan;
     const pporEquity = ppor.value - ppor.loan;
-    const usablePporEquity = Math.max(0, 0.8 * ppor.value - ppor.loan);
-    const usableIpEquity = activeIps.reduce((sum, property) => sum + Math.max(0, 0.8 * property.value - property.loan), 0);
+    const usablePporEquity = usablePporEquityForYear(ppor, g, year);
+    const usableIpEquity = usableIpEquityForYear(activeIps, year, g);
     const totalDebt = ppor.loan + ipLoan;
     const netWorth = cash + stockBalance + pporEquity + ipEquity;
     return {
@@ -328,15 +433,17 @@ export function simulate(globals, investments, opts = {}) {
     cash += cashInterest - cashInterestTax;
 
     // PPOR: grow + amortise (P&I assumed paid from expenses budget)
-    ppor.value *= (1 + g.ppor.growthPct/100);
+    const pporGrowthPct = (year - START_YEAR) < (g.propertyValuationFreezeYears || 0) ? 0 : g.ppor.growthPct;
+    ppor.value *= (1 + pporGrowthPct/100);
     const offsetForMortgage = g.ppor?.useCashAsOffset === false ? 0 : Math.max(0, cash);
     const pporLoanRate = (g.ppor?.loanRatePct ?? g.interestRatePct ?? 0) / 100;
+    const deductiblePporDebt = deductiblePporDebtLots.reduce((sum, lot) => sum + lot.amount, 0);
     const deductibleInterestBase = Math.min(Math.max(0, deductiblePporDebt), Math.max(0, ppor.loan - offsetForMortgage));
     const deductiblePporInterest = deductibleInterestBase * pporLoanRate;
-    const deductiblePporTaxBenefit = deductiblePporInterest * g.marginalTaxRate;
+    const deductiblePporTaxBenefit = deductibleDebtTaxBenefit(deductiblePporDebtLots, pporLoanRate, deductibleInterestBase);
     const pporPay = pporPrincipalRepaymentForYear(g, ppor, cash);
     ppor.loan = Math.max(0, ppor.loan - pporPay);
-    deductiblePporDebt = Math.min(deductiblePporDebt, ppor.loan);
+    deductiblePporDebtLots = scaleDeductibleDebtLots(deductiblePporDebtLots, ppor.loan);
     cash += deductiblePporTaxBenefit;
 
     // Existing IPs
@@ -344,7 +451,8 @@ export function simulate(globals, investments, opts = {}) {
     for (const ip of ips) {
       if (year < ip.year) continue;
       if (year > ip.year) ip.value *= (1 + propertyGrowthPctForYear(ip, g, year)/100);
-      const rent = ip.value * ((ip.yieldPct ?? g.propertyYieldPct)/100);
+      if (year > ip.year) ip.annualRent = annualRentForProperty(ip, g) * (1 + rentGrowthPctForYear(ip, g, year)/100);
+      const rent = annualRentForProperty(ip, g);
       const interestRate = (ip.interestPct ?? g.interestRatePct)/100;
       const interest = ip.loan * interestRate;
       const holding = ip.value * (g.nonInterestCostPct/100);
@@ -356,9 +464,9 @@ export function simulate(globals, investments, opts = {}) {
         const offset = Math.min(ip.carriedLoss || 0, taxable);
         const netTaxable = taxable - offset;
         ip.carriedLoss = (ip.carriedLoss || 0) - offset;
-        tax = netTaxable * g.marginalTaxRate;
+        tax = netTaxable * investmentTaxRate(ip, g);
       } else if (negGearAllowed) {
-        tax = taxable * g.marginalTaxRate; // refund (negative tax)
+        tax = taxable * investmentTaxRate(ip, g); // refund (negative tax)
       } else {
         ip.carriedLoss = (ip.carriedLoss || 0) + (-taxable);
         tax = 0;
@@ -381,12 +489,15 @@ export function simulate(globals, investments, opts = {}) {
     // Snapshot pre-purchase state so the UI can evaluate "what could I buy this year"
     // using the same lender logic as actual feasibility checks.
     const decisionCash = cash;
-    const decisionPpor = { value: ppor.value, loan: ppor.loan, deductibleDebt: deductiblePporDebt };
+    const decisionPpor = { value: ppor.value, loan: ppor.loan, deductibleDebt: deductiblePporDebtLots.reduce((sum, lot) => sum + lot.amount, 0) };
     const decisionIps = ips.filter(p=>year>=p.year).map(p => ({
       loan: p.loan,
       value: p.value,
       yieldPct: p.yieldPct,
+      annualRent: annualRentForProperty(p, g),
       subtype: p.subtype,
+      owner: p.owner,
+      primaryOwnershipPct: ownershipPrimaryPct(p),
       grandfathered: p.grandfathered,
     }));
 
@@ -398,9 +509,8 @@ export function simulate(globals, investments, opts = {}) {
         const amt = inv.amount;
         const minCashBuffer = g.minCashBuffer || 0;
         const { source, cashUsed, equityDraw } = investmentFundingSplit(inv, amt);
-        const pporUsable = Math.max(0, 0.8 * ppor.value - ppor.loan);
-        const ipUsable = ips.filter(p=>year>=p.year)
-          .reduce((s,p)=>s + Math.max(0, 0.8 * p.value - p.loan), 0);
+        const pporUsable = usablePporEquityForYear(ppor, g, year);
+        const ipUsable = usableIpEquityForYear(ips, year, g);
         const usableEquity = pporUsable + ipUsable;
         let ok = true;
         if ((cash - cashUsed) < minCashBuffer) {
@@ -439,8 +549,8 @@ export function simulate(globals, investments, opts = {}) {
 
         cash -= cashUsed;
         ppor.loan += equityDraw;
-        deductiblePporDebt += equityDraw + deductibleOffsetAmount(g, ppor, cashUsed);
-        deductiblePporDebt = Math.min(deductiblePporDebt, ppor.loan);
+        deductiblePporDebtLots = addDeductibleDebtLot(deductiblePporDebtLots, equityDraw + deductibleOffsetAmount(g, ppor, cashUsed), inv, g);
+        deductiblePporDebtLots = scaleDeductibleDebtLots(deductiblePporDebtLots, ppor.loan);
         stockBalance += amt;
         yearLog.events.push(`Buy stocks ${fmt(amt)} (${source}${cashUsed && equityDraw ? `: ${fmt(cashUsed)} cash, ${fmt(equityDraw)} equity` : ''})`);
         investmentSteps.push({
@@ -462,9 +572,8 @@ export function simulate(globals, investments, opts = {}) {
         const depositAndCosts = deposit + upfront;
         const depositSource = inv.depositSource || 'cash';
 
-        const pporUsable = Math.max(0, 0.8 * ppor.value - ppor.loan);
-        const ipUsable = ips.filter(p=>year>=p.year)
-          .reduce((s,p)=>s + Math.max(0, 0.8 * p.value - p.loan), 0);
+        const pporUsable = usablePporEquityForYear(ppor, g, year);
+        const ipUsable = usableIpEquityForYear(ips, year, g);
         const usableEquity = pporUsable + ipUsable;
 
         const { cashUsed, equityDraw } = investmentFundingSplit(inv, depositAndCosts);
@@ -505,16 +614,19 @@ export function simulate(globals, investments, opts = {}) {
 
         cash -= cashUsed;
         ppor.loan += equityDraw;
-          deductiblePporDebt += equityDraw + deductibleOffsetAmount(g, ppor, cashUsed);
-          deductiblePporDebt = Math.min(deductiblePporDebt, ppor.loan);
+        deductiblePporDebtLots = addDeductibleDebtLot(deductiblePporDebtLots, equityDraw + deductibleOffsetAmount(g, ppor, cashUsed), inv, g);
+        deductiblePporDebtLots = scaleDeductibleDebtLots(deductiblePporDebtLots, ppor.loan);
         ips.push({
           id: inv.id, name: inv.name, year, price: inv.price, value: inv.price,
           loan: baseLoan, originalLoan: baseLoan,
-          yieldPct: inv.yieldPct, growthPct: inv.growthPct,
+          yieldPct: inv.yieldPct, annualRent: annualRentForProperty(inv, g), rentGrowthPct: inv.rentGrowthPct,
+          rentGrowthSchedule: rentGrowthSchedule(inv, g), growthPct: inv.growthPct,
           growthMode: inv.growthMode || (inv.growthSchedule?.length ? 'phased' : (inv.growthPct != null ? 'fixed' : 'auto')),
           growthSchedule: propertyGrowthSchedule(inv, g),
           interestPct: inv.interestPct ?? g.interestRatePct,
           subtype: inv.subtype || 'established',
+          owner: inv.owner || 'primary',
+          primaryOwnershipPct: ownershipPrimaryPct(inv),
           grandfathered: false,
           carriedLoss: 0,
           depositSource,
@@ -552,7 +664,7 @@ export function simulate(globals, investments, opts = {}) {
       year, surplus,
       cash, stocks: stockBalance,
       pporValue: ppor.value, pporLoan: ppor.loan,
-      pporDeductibleDebt: deductiblePporDebt,
+      pporDeductibleDebt: deductiblePporDebtLots.reduce((sum, lot) => sum + lot.amount, 0),
       pporDeductibleInterest: deductiblePporInterest,
       pporDeductibleTaxBenefit: deductiblePporTaxBenefit,
       ipValue: totalIpValue, ipLoan: totalIpLoan,

@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "node tests.js",
+    "test": "node tests/tests.js",
     "serve": "python -m http.server 8765",
-    "optimize": "node optimize_net_worth.js"
+    "optimize": "node scripts/optimize_net_worth.js"
   }
 }

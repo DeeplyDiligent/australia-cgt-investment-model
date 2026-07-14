@@ -1,4 +1,4 @@
-import { DEFAULT_GLOBALS, END_YEAR, START_YEAR, simulate, allWarnings } from './engine.js';
+import { DEFAULT_GLOBALS, END_YEAR, START_YEAR, simulate, allWarnings } from '../engine.js';
 import { appendFileSync, writeFileSync } from 'node:fs';
 
 const BAD_WARNING = /Cash shortfall|Equity shortfall|DTI cap breached|Serviceability cap breached|Cash negative/;
@@ -22,7 +22,7 @@ function parseArgs(argv) {
     endYear: END_YEAR,
     subtype: 'any',
     depositSource: 'any',
-    minCashBuffer: 0,
+    minCashBuffer: 88000,
     bestJson: null,
     bestJsonl: null,
     debug: false,
@@ -128,6 +128,8 @@ function makeInvestment(index, year, price, globals, subtype, cashFundingPct) {
     yieldPct: globals.propertyYieldPct,
     growthMode: 'auto',
     interestPct: globals.interestRatePct,
+    owner: 'primary',
+    primaryOwnershipPct: 100,
   };
 }
 
@@ -140,6 +142,8 @@ function makeStockInvestment(index, year, amount, cashFundingPct) {
     amount,
     depositSource: sourceFromCashPct(cashFundingPct),
     cashFundingPct,
+    owner: 'primary',
+    primaryOwnershipPct: 100,
   };
 }
 
@@ -209,7 +213,7 @@ function optimise(globals, cfg) {
   const prices = buildPrices(cfg.minPrice, cfg.maxPrice, cfg.stepPrice);
   const stockAmounts = buildAmounts(cfg.minStockAmount, cfg.maxStockAmount, cfg.stockStep);
   const assetTypes = cfg.assetTypes.split(',').map((x) => x.trim()).filter(Boolean);
-  const subtypes = expandChoices(cfg.subtype, ['new']);
+  const subtypes = expandChoices(cfg.subtype, ['new', 'established']);
   const fundingPcts = buildFundingPcts(cfg.depositSource, cfg.fundingStepPct);
   const candidateLimit = cfg.candidateLimit || Math.max(cfg.beamWidth * 12, cfg.beamWidth + 1);
   const emptyResult = evaluatePlan(globals, []);

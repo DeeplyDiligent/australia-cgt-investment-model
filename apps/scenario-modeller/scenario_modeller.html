@@ -166,8 +166,8 @@ import {
   START_YEAR, END_YEAR, YEARS, AVAILABLE_TO_INVEST, INITIAL_STATE, DEFAULT_GLOBALS,
   fmt, fmtK, pct, simulate, borrowingCapacity, afterTaxIncome, householdGross, householdNet,
   defaultGrowthScheduleForProperty, growthScheduleSummary, priceBandThresholdsForYear,
-  fundingCashPct, fundingParts,
-} from './engine.js?v=4';
+  fundingCashPct, fundingParts, usablePporEquityForYear, usableIpEquityForYear,
+} from './engine.js?v=5';
 
 const html = htm.bind(h);
 
@@ -176,7 +176,7 @@ function uid() { return Math.random().toString(36).slice(2, 9); }
 // ---------- UI COMPONENTS ----------
 const STORAGE_KEY = 'scenario-modeller-v1';
 const SCENARIO_PARAM = 'scenario';
-const DEFAULT_OPTIMIZER_JSONL = 'optimizer_50_buys_deeper_best.jsonl';
+const DEFAULT_OPTIMIZER_JSONL = 'artifacts/optimizer_50_buys_deeper_best.jsonl';
 
 function toBase64Url(jsonText) {
   return btoa(unescape(encodeURIComponent(jsonText)))
@@ -321,6 +321,18 @@ function fundingLabel(inv) {
   return `${pct}% cash / ${100 - pct}% equity`;
 }
 
+function optimizerPropertyCounts(entry) {
+  const investments = Array.isArray(entry?.plan)
+    ? entry.plan
+    : (Array.isArray(entry?.scenario?.investments) ? entry.scenario.investments : []);
+  return investments.reduce((counts, investment) => {
+    if (investment?.type !== 'property') return counts;
+    if (investment.subtype === 'new') counts.new += 1;
+    else counts.established += 1;
+    return counts;
+  }, { new: 0, established: 0 });
+}
+
 function FundingEditor({ value, setValue }) {
   const source = value.depositSource || 'cash';
   const cashPct = fundingCashPct(value);
@@ -438,7 +450,7 @@ function App() {
     } catch (e) {
       console.warn('Failed to load optimizer JSONL file', e);
       setPickerEntries([]);
-      setPickerError(`Could not load ${pickerPath}. Ensure it is in the same folder as this page and served by the local web server.`);
+      setPickerError(`Could not load ${pickerPath}. Ensure the path is relative to the app folder and served by the local web server.`);
     } finally {
       setPickerLoading(false);
     }
@@ -499,14 +511,20 @@ function App() {
               <div class="picker-list">
                 ${pickerEntries.map(entry => html`
                   <div class="picker-item">
+                    ${(() => {
+                      const propertyCounts = optimizerPropertyCounts(entry);
+                      return html`
                     <div class="picker-grid">
                       <div><div class="k">Net worth</div><div class="v" style="color:var(--good)">${fmt(entry.finalNetWorth || 0)}</div></div>
                       <div><div class="k">Buys</div><div class="v">${entry.additionalInvestments ?? 0}</div></div>
+                      <div><div class="k">Properties</div><div class="v">${propertyCounts.new + propertyCounts.established}</div><div class="muted">${propertyCounts.new} new · ${propertyCounts.established} established</div></div>
                       <div><div class="k">Depth</div><div class="v">${entry.depth ?? 0}</div></div>
                       <div><div class="k">Evaluations</div><div class="v">${(entry.evaluations || 0).toLocaleString()}</div></div>
                       <div><div class="k">Debt</div><div class="v">${fmt(entry.finalDebt || 0)}</div></div>
                       <div><div class="k">Cash</div><div class="v">${fmt(entry.finalCash || 0)}</div></div>
                     </div>
+                      `;
+                    })()}
                     <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
                       <div class="muted">${entry.foundAt || 'unknown time'} · ${entry.kind || 'event'}</div>
                       <button class="small" onClick=${()=>applyOptimizerEntry(entry)}>Apply scenario</button>
@@ -588,8 +606,12 @@ function LeftPanel({ globals, setGlobals, sim, resetAll, copyShareLink, openScen
         <${NumField} label="Income growth" suffix="%/yr" value=${globals.incomeGrowthPct ?? 0} step=${0.1} onChange=${v=>set('incomeGrowthPct',v)} />
         <div class="muted" style="margin-top:4px">Household gross: <strong style="color:var(--text)">${fmt(householdGross(globals))}</strong> now / <strong style="color:var(--text)">${fmt(householdGross(globals, END_YEAR))}</strong> in ${END_YEAR} · net: <strong style="color:var(--text)">${fmt(householdNet(globals))}</strong> now</div>
         <div class="row">
-          <${NumField} label="MTR (owner of IPs)" suffix="0-1" value=${globals.marginalTaxRate} step=${0.01} onChange=${v=>set('marginalTaxRate',v)} />
+          <${NumField} label="Your MTR" suffix="0-1" value=${globals.primaryMarginalTaxRate ?? globals.marginalTaxRate} step=${0.01} onChange=${v=>set('primaryMarginalTaxRate',v)} />
+          <${NumField} label="Partner MTR" suffix="0-1" value=${globals.partnerMarginalTaxRate ?? globals.marginalTaxRate} step=${0.01} onChange=${v=>set('partnerMarginalTaxRate',v)} />
+        </div>
+        <div class="row">
           <${NumField} label="Cash return" suffix="%" value=${globals.cashReturnPct} step=${0.1} onChange=${v=>set('cashReturnPct',v)} />
+          <div></div>
         </div>
         <div class="row">
           <${NumField} label="2026 surplus remaining" suffix="0-1" value=${globals.currentYearSurplusFraction} step=${0.01} onChange=${v=>set('currentYearSurplusFraction',v)} />
@@ -627,6 +649,18 @@ function LeftPanel({ globals, setGlobals, sim, resetAll, copyShareLink, openScen
           <${NumField} label="Living expenses (HEM)" suffix="$/yr" value=${globals.livingExpensesAnnual} step=${1000} onChange=${v=>set('livingExpensesAnnual',v)} />
           <${NumField} label="Rent shading" suffix="%" value=${globals.rentShadingPct} step=${1} onChange=${v=>set('rentShadingPct',v)} />
         </div>
+        <div class="row">
+          <${NumField} label="Credit card limits" suffix="$" value=${globals.creditCardLimit || 0} step=${1000} onChange=${v=>set('creditCardLimit',v)} />
+          <${NumField} label="Card assessment" suffix="%/mo" value=${globals.creditCardAssessmentRatePct || 0} step=${0.1} onChange=${v=>set('creditCardAssessmentRatePct',v)} />
+        </div>
+        <div class="row">
+          <${NumField} label="HECS commitment" suffix="$/yr" value=${globals.hecsAnnual || 0} step=${100} onChange=${v=>set('hecsAnnual',v)} />
+          <${NumField} label="Serviceability buffer" suffix="$/yr" value=${globals.serviceabilityBufferAnnual || 0} step=${1000} onChange=${v=>set('serviceabilityBufferAnnual',v)} />
+        </div>
+        <label style="display:flex;align-items:center;gap:6px;margin-top:8px">
+          <input type="checkbox" checked=${!!globals.includeNegativeGearingInServiceability} onChange=${e=>set('includeNegativeGearingInServiceability',e.target.checked)} />
+          Include negative gearing in serviceability
+        </label>
         <${NumField} label="Protected cash buffer" suffix="$" value=${globals.minCashBuffer || 0} step=${1000} onChange=${v=>set('minCashBuffer',v)} />
         <h3 style="margin-top:14px">PPOR</h3>
         <div class="row">
@@ -637,6 +671,7 @@ function LeftPanel({ globals, setGlobals, sim, resetAll, copyShareLink, openScen
           <${NumField} label="Monthly repayment" suffix="$" value=${globals.ppor.repaymentMonthly ?? 4499} step=${50} onChange=${v=>setPpor('repaymentMonthly',v)} />
           <${NumField} label="Remaining term" suffix="years" value=${globals.ppor.remainingTermYears ?? 28} step=${1} onChange=${v=>setPpor('remainingTermYears',v)} />
         </div>
+        <${NumField} label="Assessed repayment" suffix="$/mo" value=${globals.ppor.assessedRepaymentMonthly ?? 6883} step=${50} onChange=${v=>setPpor('assessedRepaymentMonthly',v)} />
         <div class="muted" style="margin-top:4px">Cash is treated as PPOR offset, so it reduces home-loan interest rather than earning cash interest.</div>
       </div>
     </div>
@@ -760,8 +795,8 @@ function BucketChart({ sim, globals, investments }) {
   function usableEquityForRow(row) {
     const ppor = row.decisionPpor || { value: row.pporValue || 0, loan: row.pporLoan || 0 };
     const ips = row.decisionIps || [];
-    const pporUsable = Math.max(0, 0.8 * (ppor.value || 0) - (ppor.loan || 0));
-    const ipUsable = ips.reduce((sum, p) => sum + Math.max(0, 0.8 * (p.value || 0) - (p.loan || 0)), 0);
+    const pporUsable = usablePporEquityForYear(ppor, globals, row.year);
+    const ipUsable = usableIpEquityForYear(ips, row.year, globals);
     return pporUsable + ipUsable;
   }
 
@@ -1283,6 +1318,7 @@ function InvestmentTimeline({ sim }) {
 function RightPanel({ investments, addInvestment, updateInvestment, removeInvestment, globals, sim }) {
   const [form, setForm] = useState({
     type: 'property', subtype: 'new', depositSource: 'cash', cashFundingPct: 100,
+    owner: 'primary', primaryOwnershipPct: 100,
     name: '', year: 2027, price: 700000,
     depositPct: 20, yieldPct: 4.0, growthMode: 'auto', growthPct: 4.0, interestPct: globals.interestRatePct ?? 6.3,
     ...phasedDefaults(),
@@ -1290,6 +1326,11 @@ function RightPanel({ investments, addInvestment, updateInvestment, removeInvest
   });
 
   const setF = (k, v) => setForm({ ...form, [k]: v });
+
+  const ownerPayload = (value) => ({
+    owner: value.owner || 'primary',
+    primaryOwnershipPct: value.owner === 'partner' ? 0 : value.owner === 'joint' ? 50 : +(value.primaryOwnershipPct ?? 100),
+  });
 
   const submit = () => {
     if (form.type === 'property') {
@@ -1301,6 +1342,7 @@ function RightPanel({ investments, addInvestment, updateInvestment, removeInvest
         name: form.name || `IP ${form.subtype === 'new' ? 'new-build' : 'established'} ${form.year}`,
         year: +form.year, price: +form.price,
         depositPct: +form.depositPct, yieldPct: +form.yieldPct,
+        ...ownerPayload(form),
         ...buildGrowthPayload(form), interestPct: +form.interestPct,
       });
     } else {
@@ -1310,6 +1352,7 @@ function RightPanel({ investments, addInvestment, updateInvestment, removeInvest
         year: +form.year, amount: +form.amount,
         depositSource: form.depositSource,
         cashFundingPct: fundingCashPct(form),
+        ...ownerPayload(form),
       });
     }
   };
@@ -1332,6 +1375,14 @@ function RightPanel({ investments, addInvestment, updateInvestment, removeInvest
           <${FundingEditor} value=${form} setValue=${setF} />
         `}
         ${form.type === 'stock' && html`<${FundingEditor} value=${form} setValue=${setF} />`}
+        <label>Owner</label>
+        <select value=${form.owner} onChange=${e=>setForm({ ...form, owner: e.target.value, primaryOwnershipPct: e.target.value === 'partner' ? 0 : e.target.value === 'joint' ? 50 : form.primaryOwnershipPct })}>
+          <option value="primary">You / primary earner</option>
+          <option value="partner">Wife / partner</option>
+          <option value="joint">Joint 50/50</option>
+          <option value="custom">Custom split</option>
+        </select>
+        ${form.owner === 'custom' && html`<${NumField} label="Your ownership %" value=${form.primaryOwnershipPct} step=${5} onChange=${v=>setF('primaryOwnershipPct',v)} />`}
         <label>Name</label>
         <input type="text" value=${form.name} placeholder=${form.type==='property'?'e.g. Beveridge H&L':'e.g. VAS top-up'}
           onInput=${e=>setF('name', e.target.value)} />
@@ -1380,6 +1431,7 @@ function RightPanel({ investments, addInvestment, updateInvestment, removeInvest
                   <div>Amount: <strong style="color:var(--text)">${fmt(inv.amount)}</strong></div>
                   <div>Funding: ${fundingLabel(inv)}</div>
                 `}
+                <div>Owner: ${inv.primaryOwnershipPct ?? (inv.owner === 'partner' ? 0 : inv.owner === 'joint' ? 50 : 100)}% you</div>
               </div>
               ${inv.type==='property' && html`<${PropertyFundingBreakdown} investment=${inv} globals=${globals} compact=${true} />`}
               ${inv.type==='property' && html`<${FeasibilityBadge} inv=${inv} sim=${sim} globals=${globals} />`}
@@ -1391,6 +1443,14 @@ function RightPanel({ investments, addInvestment, updateInvestment, removeInvest
                     ${YEARS.map(y => html`<option value=${y}>${y}</option>`)}
                   </select>
                   ${inv.type==='property' ? html`
+                    <label>Owner</label>
+                    <select value=${inv.owner || 'primary'} onChange=${e=>updateInvestment(inv.id, { owner:e.target.value, primaryOwnershipPct: e.target.value === 'partner' ? 0 : e.target.value === 'joint' ? 50 : (inv.primaryOwnershipPct ?? 100) })}>
+                      <option value="primary">You / primary earner</option>
+                      <option value="partner">Wife / partner</option>
+                      <option value="joint">Joint 50/50</option>
+                      <option value="custom">Custom split</option>
+                    </select>
+                    ${(inv.owner || 'primary') === 'custom' && html`<${NumField} label="Your ownership %" value=${inv.primaryOwnershipPct ?? 100} step=${5} onChange=${v=>updateInvestment(inv.id,{primaryOwnershipPct:v})} />`}
                     <div class="row">
                       <div>
                         <label>Subtype</label>
@@ -1423,6 +1483,14 @@ function RightPanel({ investments, addInvestment, updateInvestment, removeInvest
                       year=${inv.year}
                       globals=${globals} />
                   ` : html`
+                    <label>Owner</label>
+                    <select value=${inv.owner || 'primary'} onChange=${e=>updateInvestment(inv.id, { owner:e.target.value, primaryOwnershipPct: e.target.value === 'partner' ? 0 : e.target.value === 'joint' ? 50 : (inv.primaryOwnershipPct ?? 100) })}>
+                      <option value="primary">You / primary earner</option>
+                      <option value="partner">Wife / partner</option>
+                      <option value="joint">Joint 50/50</option>
+                      <option value="custom">Custom split</option>
+                    </select>
+                    ${(inv.owner || 'primary') === 'custom' && html`<${NumField} label="Your ownership %" value=${inv.primaryOwnershipPct ?? 100} step=${5} onChange=${v=>updateInvestment(inv.id,{primaryOwnershipPct:v})} />`}
                     <${NumField} label="Amount" value=${inv.amount} step=${1000} onChange=${v=>updateInvestment(inv.id,{amount:v})} />
                     <${FundingEditor} value=${inv} setValue=${(k, v) => updateInvestment(inv.id, { [k]: v })} />
                   `}

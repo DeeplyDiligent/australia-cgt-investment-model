@@ -1,14 +1,14 @@
 // Node CLI test runner for the simulation engine.
-//   node tests.js              # run all built-in tests
-//   node tests.js --scenario   # dump a full sim with the default plan
-//   node tests.js --json '<json>'  # run an arbitrary scenario from stdin/arg
+//   node tests/tests.js                 # run all built-in tests
+//   node tests/tests.js --scenario      # dump a full sim with the default plan
+//   node tests/tests.js --json '<json>' # run an arbitrary scenario from stdin/arg
 
 import {
   START_YEAR, END_YEAR, AVAILABLE_TO_INVEST, INITIAL_STATE, DEFAULT_GLOBALS,
   simulate, borrowingCapacity, afterTaxIncome, householdGross, householdNet,
-  defaultGrowthScheduleForProperty, propertyGrowthPctForYear, priceBandThresholdsForYear, availableToInvestForYear,
+  defaultGrowthScheduleForProperty, propertyGrowthPctForYear, defaultRentGrowthScheduleForProperty, rentGrowthPctForYear, priceBandThresholdsForYear, availableToInvestForYear,
   pporPrincipalRepaymentForYear, getRow, allWarnings,
-} from './engine.js';
+} from '../engine.js';
 
 // ---------- TINY ASSERTION LIB ----------
 let passed = 0, failed = 0;
@@ -83,19 +83,30 @@ test('PPOR and investment debt use separate default rates', () => {
 });
 
 section('Growth assumptions');
-test('New 700k property gets 2% then 4% then 5% auto growth', () => {
+test('New 700k property gets conservative phased auto growth', () => {
   const sched = defaultGrowthScheduleForProperty('new', 700000);
-  eq(sched[0].pct, 2);
-  eq(sched[1].pct, 4);
-  eq(sched[2].pct, 5);
+  eq(sched[0].pct, 3.0);
+  eq(sched[1].pct, 4.25);
+  eq(sched[2].pct, 4.75);
   const prop = { subtype: 'new', price: 700000, year: 2026, growthMode: 'auto' };
-  eq(propertyGrowthPctForYear(prop, G, 2027), 2);
-  eq(propertyGrowthPctForYear(prop, G, 2032), 4);
-  eq(propertyGrowthPctForYear(prop, G, 2037), 5);
+  eq(propertyGrowthPctForYear(prop, G, 2027), 0);
+  eq(propertyGrowthPctForYear(prop, G, 2033), 4.25);
+  eq(propertyGrowthPctForYear(prop, G, 2038), 4.75);
 });
-test('New 800k stays in the middle bucket, but >800k gets 5% immediately', () => {
-  eq(defaultGrowthScheduleForProperty('new', 800000)[0].pct, 2);
-  eq(defaultGrowthScheduleForProperty('new', 850000)[0].pct, 5);
+test('New 800k stays in the middle bucket, but >800k gets only a modest premium', () => {
+  eq(defaultGrowthScheduleForProperty('new', 800000)[0].pct, 3.0);
+  eq(defaultGrowthScheduleForProperty('new', 850000)[0].pct, 3.75);
+});
+test('Lower-band new properties use flat low capital growth', () => {
+  const sched = defaultGrowthScheduleForProperty('new', 550000);
+  eq(sched.length, 1);
+  eq(sched[0].pct, 2.0);
+  eq(propertyGrowthPctForYear({ subtype: 'new', price: 550000, year: 2026, growthMode: 'auto' }, G, 2037), 2.0);
+});
+test('Lower-band established properties use flat moderate capital growth', () => {
+  const sched = defaultGrowthScheduleForProperty('established', 550000);
+  eq(sched.length, 1);
+  eq(sched[0].pct, 3.5);
 });
 test('Category price bands drift upward over time from 2026 levels', () => {
   const bands2026 = priceBandThresholdsForYear(2026, G);
@@ -104,12 +115,26 @@ test('Category price bands drift upward over time from 2026 levels', () => {
   truthy(bands2044.lower > bands2026.lower);
 });
 test('An 850k new property in 2044 no longer falls in the premium bucket', () => {
-  eq(defaultGrowthScheduleForProperty('new', 850000, 2044, G)[0].pct, 0);
-  eq(defaultGrowthScheduleForProperty('new', 2200000, 2044, G)[0].pct, 5);
+  eq(defaultGrowthScheduleForProperty('new', 850000, 2044, G)[0].pct, 2);
+  eq(defaultGrowthScheduleForProperty('new', 2200000, 2044, G)[0].pct, 3.75);
 });
 test('Fixed growth mode still uses explicit growthPct', () => {
   const prop = { subtype: 'new', price: 700000, year: 2026, growthMode: 'fixed', growthPct: 6.5 };
   eq(propertyGrowthPctForYear(prop, G, 2035), 6.5);
+});
+test('Rent growth is explicit and new properties phase up to average rent growth', () => {
+  const sched = defaultRentGrowthScheduleForProperty('new', G);
+  eq(sched[0].pct, 3.0);
+  eq(sched[1].pct, 4.0);
+  eq(sched[2].pct, 4.5);
+  const prop = { subtype: 'new', price: 700000, year: 2026 };
+  eq(rentGrowthPctForYear(prop, G, 2027), 3.0);
+  eq(rentGrowthPctForYear(prop, G, 2029), 4.0);
+  eq(rentGrowthPctForYear(prop, G, 2032), 4.5);
+});
+test('Established properties use average rent growth immediately', () => {
+  const prop = { subtype: 'established', price: 700000, year: 2026 };
+  eq(rentGrowthPctForYear(prop, G, 2027), G.rentGrowthPct);
 });
 
 section('Surplus timing');
@@ -135,10 +160,21 @@ test('Servicing room is positive at baseline (no prospective)', () => {
   const cap = borrowingCapacity(G, [], { value: INITIAL_STATE.ppor.value, loan: INITIAL_STATE.ppor.loan });
   truthy(cap.servRoom > 0);
 });
+test('Dynamic serviceability approximates current ING borrowing capacity', () => {
+  const cap = borrowingCapacity(G, [], { value: INITIAL_STATE.ppor.value, loan: INITIAL_STATE.ppor.loan }, {
+    price: 650000,
+    depositPct: 20,
+    yieldPct: 550 * 52 / 650000 * 100,
+    subtype: 'new',
+    depositSource: 'cash',
+  });
+  near(cap.servRoom, 506010, 15000);
+});
 test('New build adds neg-gearing tax shield to servicing income', () => {
   const ppor = { value: INITIAL_STATE.ppor.value, loan: INITIAL_STATE.ppor.loan };
-  const capEst = borrowingCapacity(G, [], ppor, samplePropertyEstablished);
-  const capNew = borrowingCapacity(G, [], ppor, samplePropertyNew);
+  const serviceabilityWithNg = { ...G, includeNegativeGearingInServiceability: true };
+  const capEst = borrowingCapacity(serviceabilityWithNg, [], ppor, samplePropertyEstablished);
+  const capNew = borrowingCapacity(serviceabilityWithNg, [], ppor, samplePropertyNew);
   truthy(capNew.negGearAddBack > capEst.negGearAddBack);
   truthy(capNew.servRoom > capEst.servRoom);
 });
@@ -259,6 +295,16 @@ test('Equity-funded stock increases PPOR loan and deductible interest base', () 
   const row = getRow(sim, 2028);
   near(row.pporLoan - baseLoan, 50000, 1);
   truthy(row.pporDeductibleDebt >= 50000, 'equity-funded stocks should create deductible PPOR debt');
+});
+test('Deductible PPOR interest benefit follows investment ownership tax rate', () => {
+  const primaryStock = { id: 'stock-primary', type: 'stock', name: 'Stock primary', year: 2028, amount: 100000, depositSource: 'equity', owner: 'primary', primaryOwnershipPct: 100 };
+  const partnerStock = { ...primaryStock, id: 'stock-partner', owner: 'partner', primaryOwnershipPct: 0 };
+  const jointStock = { ...primaryStock, id: 'stock-joint', owner: 'joint', primaryOwnershipPct: 50 };
+  const primaryBenefit = getRow(simulate(G, [primaryStock]), 2029).pporDeductibleTaxBenefit;
+  const partnerBenefit = getRow(simulate(G, [partnerStock]), 2029).pporDeductibleTaxBenefit;
+  const jointBenefit = getRow(simulate(G, [jointStock]), 2029).pporDeductibleTaxBenefit;
+  truthy(primaryBenefit > jointBenefit, 'primary 47% benefit should exceed joint blended benefit');
+  truthy(jointBenefit > partnerBenefit, 'joint blended benefit should exceed partner 30% benefit');
 });
 
 section('Constraint warnings');
